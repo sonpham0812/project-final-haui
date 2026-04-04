@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Form, Input, Button, Card, Typography, message } from "antd";
-import { authServices } from "../../api/auth";
 import { AuthContext } from "../../context/AuthContext";
+import { publicAuthServices } from "../../api";
 
 const { Title } = Typography;
 
@@ -14,7 +14,7 @@ const Register = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await authServices.register(values);
+      const response = await publicAuthServices.register(values);
 
       if (!response || !response.success) {
         throw new Error(response?.message || "Không thể đăng ký");
