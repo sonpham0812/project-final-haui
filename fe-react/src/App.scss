@@ -1,0 +1,220 @@
+// variables
+$color-main-white: #fff;
+$color-main-violet: #7b2cbf;
+$color-light-viloet: #e0aaff;
+$font-family-manrope: "Manrope", sans-serif;
+$font-family-poppins: "Poppins", sans-serif;
+$transition-ease: all 300ms ease-in-out;
+
+// global styles & resets
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  font-family: $font-family-poppins;
+}
+
+ul {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+  color: $color-main-white;
+}
+
+.flex {
+  display: flex;
+
+  &-column {
+    flex-direction: column;
+  }
+
+  &-wrap {
+    flex-wrap: wrap;
+  }
+}
+
+.align {
+  &-center {
+    align-items: center;
+  }
+
+  &-start {
+    align-items: flex-start;
+  }
+
+  &-end {
+    align-items: flex-end;
+  }
+
+  &-stretch {
+    align-items: stretch;
+  }
+}
+
+.justify {
+  &-center {
+    justify-content: center;
+  }
+
+  &-between {
+    justify-content: space-between;
+  }
+
+  &-start {
+    justify-content: flex-start;
+  }
+
+  &-end {
+    justify-content: flex-end;
+  }
+}
+
+.py {
+  &-xs {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  &-s {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  &-m {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  &-l {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+.mx {
+  &-xs {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+
+  &-s {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  &-m {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  &-l {
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+}
+
+.px {
+  &-xs {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  &-s {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  &-m {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  &-l {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+.my {
+  &-xs {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  &-s {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  &-m {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  &-l {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+
+.padding {
+  &-xs {
+    padding: 4px;
+  }
+
+  &-s {
+    padding: 8px;
+  }
+
+  &-m {
+    padding: 16px;
+  }
+
+  &-l {
+    padding: 24px;
+  }
+}
+
+.margin {
+  &-xs {
+    margin: 4px;
+  }
+
+  &-s {
+    margin: 8px;
+  }
+
+  &-m {
+    margin: 16px;
+  }
+
+  &-l {
+    margin: 24px;
+  }
+}
+
+.bg-main {
+  background-color: $color-main-violet;
+}
+
+.bg-light {
+  background-color: $color-light-viloet;
+}
+
+.main-text {
+  color: $color-main-white;
+}
