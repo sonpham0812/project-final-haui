@@ -11,6 +11,7 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
+import "./index.scss";
 
 const { Sider } = Layout;
 const { SubMenu, Item } = Menu;
@@ -29,25 +30,20 @@ export default function Sidebar({ isCollapsed }) {
   })();
 
   return (
-    <div className="h-screen fixed top-16">
+    <div className="sidebar-wrapper">
       <Sider
         trigger={null}
         collapsible
         collapsed={isCollapsed}
         collapsedWidth={80}
-        style={{
-          background: "transparent",
-        }}
       >
-        <div className="flex flex-col h-full">
-          {/* Menu */}
-          <div className="flex-1 overflow-auto py-4">
+        <div className="sidebar-inner">
+          <div className="menu-container">
             <Menu
               mode="inline"
               inlineCollapsed={isCollapsed}
               selectedKeys={[selectedKey]}
               defaultOpenKeys={["product"]}
-              style={{ borderRight: "none", backgroundColor: "transparent" }}
             >
               <Item key="/dashboard" icon={<DashboardOutlined />}>
                 <Link to="/dashboard">Dashboard</Link>

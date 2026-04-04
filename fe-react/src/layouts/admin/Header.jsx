@@ -5,17 +5,16 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Input } from "antd";
+import "./index.scss";
 
 export default function Header({ toggleSidebar, isCollapsed }) {
   return (
-    <div className="sticky top-0 flex flex-row justify-end bg-(--main-color) z-50 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]">
-      <div className="flex flex-row justify-between items-center py-4 w-full">
-        <div className={`flex flex-row ${isCollapsed ? "gap-9" : "gap-28"}`}>
-          <div
-            className={`flex items-center justify-between ${
-              isCollapsed ? "ml-6" : "ml-5"
-            }`}
-          >
+    <div className="header">
+      <div className="header-inner">
+        <div
+          className={`header-left ${isCollapsed ? "collapsed" : "expanded"}`}
+        >
+          <div className="icon-wrapper">
             <Button
               type="text"
               onClick={toggleSidebar}
@@ -26,27 +25,25 @@ export default function Header({ toggleSidebar, isCollapsed }) {
                   <MenuFoldOutlined style={{ fontSize: 16 }} />
                 )
               }
-              className="!text-gray-600"
+              className="toggle-btn"
             />
-            <div className="flex items-center gap-3">
-              {/* <div className="flex items-center justify-center w-10 h-10 rounded-full text-white font-bold shadow"></div> */}
-              {!isCollapsed && (
-                <span className="text-xl font-bold text-blue-600">Falcon</span>
-              )}
-            </div>
+          </div>
+          <div className="logo-wrapper">
+            {!isCollapsed && <span className="logo">Falcon</span>}
           </div>
           <Input.Search
             placeholder="Search anything..."
             allowClear
             enterButton
-            style={{ width: 256 }}
+            className="search-box"
           />
         </div>
-        <div className="flex flex-row gap-4 items-center">
-          <BellFilled style={{ fontSize: 32 }} />
+        <div className="header-right">
+          <BellFilled className="bell-icon" />
           <Avatar
             style={{ backgroundColor: "#87d068" }}
             icon={<UserOutlined />}
+            className="avatar-btn"
           />
         </div>
       </div>
