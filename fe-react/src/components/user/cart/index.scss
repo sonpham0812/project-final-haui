@@ -1,0 +1,50 @@
+.cart-popover .ant-popover-inner {
+  padding: 0 !important;
+  width: 350px;
+}
+
+.cart-modal {
+  padding: 12px;
+
+  .title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .items {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .item {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+
+    img {
+      width: 45px;
+      height: 45px;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+
+    .name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .price {
+      color: #ee4d2d;
+      font-weight: 600;
+      font-size: 13px;
+    }
+  }
+
+  .more {
+    text-align: center;
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: #777;
+  }
+}
