@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "../../layouts/admin/Header";
 import Sidebar from "../../layouts/admin/Sidebar";
+import "./index.scss";
 
 export default function Layout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -8,12 +9,12 @@ export default function Layout({ children }) {
     setIsCollapsed((prev) => !prev);
   };
   return (
-    <div className="relative mx-16">
+    <div className="layout-wrapper">
       <Header toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
-      <div className="flex flex-row">
+      <div className="layout-inner">
         <Sidebar isCollapsed={isCollapsed} />
         <div
-          className={`w-full pt-5 ${isCollapsed ? "ml-[96px]" : "ml-[224px]"}`}
+          className={`layout-content ${isCollapsed ? "collapsed" : "expanded"}`}
         >
           {children}
         </div>
