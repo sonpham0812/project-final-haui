@@ -27,33 +27,40 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await publicAuthServices.login(values);
+      console.log("Login response:", response);
 
       let token = null;
-      let role = "USER";
+      let userData = null;
 
-      if (response?.access_token) {
-        // json-server response
-        token = response.token;
-        role = response.user?.role || "USER";
-      } else if (response?.success && response.data?.access_token) {
-        // express BE response
-        token = response.data.access_token;
-        const payload = decodeJwt(token);
-        role = payload?.role || "USER";
+      if (response.access_token) {
+        // Backend response format mới
+        token = response.access_token;
+        userData = decodeJwt(token);
       } else {
         throw new Error("Invalid credentials");
       }
 
+      if (!userData || !userData.role) {
+        throw new Error("Invalid token data");
+      }
+
       login({
-        email: values.email,
+        id: userData.id,
+        email: userData.email,
+        role: userData.role,
         token,
-        role,
       });
 
       localStorage.setItem("access_token", token);
 
       message.success("Đăng nhập thành công");
-      navigate(role === "ADMIN" ? "/admin" : "/");
+
+      // Chuyển hướng dựa trên role
+      if (userData.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/home");
+      }
     } catch (err) {
       console.error(err);
       message.error("Email hoặc mật khẩu không đúng");
@@ -91,7 +98,7 @@ const Login = () => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
-              Login
+              Đăng Nhập
             </Button>
           </Form.Item>
 
