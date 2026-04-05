@@ -1,11 +1,12 @@
 // routes/AppRoutes.jsx
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import routers from "./routes";
 
 import ProtectedRoute from "./ProtectRoute";
 import AdminLayout from "../layouts/admin";
 import UserLayout from "../layouts/user";
 import AuthLayout from "../layouts/auth";
+import useAuth from "../hooks/useAuth";
 
 const getLayout = (layout, children) => {
   if (layout === "admin") return <AdminLayout>{children}</AdminLayout>;
@@ -15,8 +16,26 @@ const getLayout = (layout, children) => {
 };
 
 const AppRoutes = () => {
+  const { isAuthenticated, isAdmin } = useAuth();
+
   return (
     <Routes>
+      {/* Redirect logic dựa trên authentication và role */}
+      <Route
+        path="/"
+        element={
+          isAuthenticated ? (
+            isAdmin ? (
+              <Navigate to="/admin" replace />
+            ) : (
+              <Navigate to="/home" replace />
+            )
+          ) : (
+            <Navigate to="/home" replace />
+          )
+        }
+      />
+
       {routers.map((route, index) => {
         const Element = route.component;
 
