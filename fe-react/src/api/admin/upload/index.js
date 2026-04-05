@@ -1,6 +1,6 @@
 import axiosClient from "../../axiosClient";
 
-export const userUploadServices = {
+export const adminUploadServices = {
   uploadImage: (file) => {
     const formData = new FormData();
     formData.append("image", file);
