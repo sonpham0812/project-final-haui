@@ -9,7 +9,7 @@ const register = catchAsync(async (req, res) => {
   }
 
   const user = await authService.register({ name, email, password });
-  res.status(201).json({ success: true, data: user });
+  res.status(201).json(user);
 });
 
 const login = catchAsync(async (req, res) => {
@@ -20,7 +20,7 @@ const login = catchAsync(async (req, res) => {
   }
 
   const result = await authService.login({ email, password });
-  res.status(200).json({ success: true, data: result });
+  res.status(200).json(result);
 });
 
 module.exports = { register, login };

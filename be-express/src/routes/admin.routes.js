@@ -11,7 +11,7 @@ router.get('/dashboard', dashboardController.getDashboard);
 
 // ── Products ──────────────────────────────────────────────────────
 router.get('/products',        productController.adminGetProducts);
-router.get('/products/:id', productController.getProductById);
+router.get('/products/:id', productController.adminGetProductById);
 router.post('/products',       upload.single('image'), productController.createProduct);
 router.put('/products/:id',    upload.single('image'), productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
