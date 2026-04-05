@@ -3,21 +3,32 @@ import { ShoppingCartOutlined } from "@ant-design/icons";
 import CartPopover from "./CartPopover";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { userCartServices } from "../../../api";
+import useAuth from "../../../hooks/useAuth";
 
 const CartIcon = () => {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
+  const {isAuthenticated} = useAuth();
 
   const getCartItems = async () => {
-    const cart = await userCartServices.getCart();
-    setCartItems(cart.items);
+    try {
+      const cart = await userCartServices.getCart();
+      setCartItems(cart.items);
+    } catch (error) {
+      console.error("Failed to get cart items:", error);
+      setCartItems([]);
+    }
   };
 
   useEffect(() => {
-    getCartItems();
-  }, []);
+    if (isAuthenticated) {
+      getCartItems();
+    } else {
+      setCartItems([]);
+    }
+  }, [isAuthenticated]);
 
   const handleGoToCart = () => {
     navigate("/cart");
