@@ -4,7 +4,16 @@ const AppError = require('../utils/AppError');
 // ----------------------------------------------------------------
 // Public: list products (paginated + filters)
 // ----------------------------------------------------------------
-const getProducts = async ({ page = 1, limit = 12, category_id, search }) => {
+const getProducts = async ({
+  page = 1,
+  limit = 12,
+  category_id,
+  search,
+  min_price,
+  max_price,
+  min_discount,
+  sort_by = 'newest',
+}) => {
   const offset = (page - 1) * limit;
   const params = [];
   let where = "WHERE p.status = 'ACTIVE'";
@@ -13,9 +22,37 @@ const getProducts = async ({ page = 1, limit = 12, category_id, search }) => {
     where += ' AND p.category_id = ?';
     params.push(category_id);
   }
+
   if (search) {
-    where += ' AND (p.name LIKE ? OR p.brand LIKE ?)';
-    params.push(`%${search}%`, `%${search}%`);
+    where += ' AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)';
+    params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+  }
+
+  if (min_price) {
+    where += ' AND p.price >= ?';
+    params.push(Number(min_price));
+  }
+
+  if (max_price) {
+    where += ' AND p.price <= ?';
+    params.push(Number(max_price));
+  }
+
+  if (min_discount) {
+    where += ' AND p.discount_percentage >= ?';
+    params.push(Number(min_discount));
+  }
+
+  // Sort options
+  let orderBy = 'p.created_at DESC';
+  if (sort_by === 'price-asc') {
+    orderBy = 'p.price ASC';
+  } else if (sort_by === 'price-desc') {
+    orderBy = 'p.price DESC';
+  } else if (sort_by === 'discount') {
+    orderBy = 'p.discount_percentage DESC';
+  } else if (sort_by === 'name') {
+    orderBy = 'p.name ASC';
   }
 
   const [[{ total }]] = await db.query(
@@ -28,7 +65,7 @@ const getProducts = async ({ page = 1, limit = 12, category_id, search }) => {
        FROM products p
        LEFT JOIN categories c ON c.id = p.category_id
      ${where}
-     ORDER BY p.created_at DESC
+     ORDER BY ${orderBy}
      LIMIT ? OFFSET ?`,
     [...params, Number(limit), offset]
   );
@@ -54,7 +91,17 @@ const getProductById = async (id) => {
 // ----------------------------------------------------------------
 // Admin: list ALL products (including inactive)
 // ----------------------------------------------------------------
-const adminGetProducts = async ({ page = 1, limit = 12, category_id, search }) => {
+const adminGetProducts = async ({
+  page = 1,
+  limit = 12,
+  category_id,
+  search,
+  min_price,
+  max_price,
+  min_discount,
+  status,
+  sort_by = 'newest',
+}) => {
   const offset = (page - 1) * limit;
   const params = [];
   let where = 'WHERE 1=1';
@@ -63,9 +110,42 @@ const adminGetProducts = async ({ page = 1, limit = 12, category_id, search }) =
     where += ' AND p.category_id = ?';
     params.push(category_id);
   }
+
   if (search) {
-    where += ' AND (p.name LIKE ? OR p.brand LIKE ?)';
-    params.push(`%${search}%`, `%${search}%`);
+    where += ' AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)';
+    params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+  }
+
+  if (min_price) {
+    where += ' AND p.price >= ?';
+    params.push(Number(min_price));
+  }
+
+  if (max_price) {
+    where += ' AND p.price <= ?';
+    params.push(Number(max_price));
+  }
+
+  if (min_discount) {
+    where += ' AND p.discount_percentage >= ?';
+    params.push(Number(min_discount));
+  }
+
+  if (status) {
+    where += ' AND p.status = ?';
+    params.push(status.toUpperCase());
+  }
+
+  // Sort options
+  let orderBy = 'p.created_at DESC';
+  if (sort_by === 'price-asc') {
+    orderBy = 'p.price ASC';
+  } else if (sort_by === 'price-desc') {
+    orderBy = 'p.price DESC';
+  } else if (sort_by === 'discount') {
+    orderBy = 'p.discount_percentage DESC';
+  } else if (sort_by === 'name') {
+    orderBy = 'p.name ASC';
   }
 
   const [[{ total }]] = await db.query(
@@ -78,7 +158,7 @@ const adminGetProducts = async ({ page = 1, limit = 12, category_id, search }) =
        FROM products p
        LEFT JOIN categories c ON c.id = p.category_id
      ${where}
-     ORDER BY p.created_at DESC
+     ORDER BY ${orderBy}
      LIMIT ? OFFSET ?`,
     [...params, Number(limit), offset]
   );
@@ -91,16 +171,18 @@ const adminGetProducts = async ({ page = 1, limit = 12, category_id, search }) =
 // ----------------------------------------------------------------
 const createProduct = async (data) => {
   const {
-    name, brand, price, description, image, thumbnail_image,
+    name, brand, price, description, thumbnail_image, images,
     discount_percentage = 0, category_id, stock = 0, status = 'ACTIVE',
   } = data;
 
+  const imagesJson = Array.isArray(images) ? JSON.stringify(images) : null;
+
   const [result] = await db.query(
     `INSERT INTO products
-       (name, brand, price, description, image, thumbnail_image,
+       (name, brand, price, description, thumbnail_image, images,
         discount_percentage, category_id, stock, status)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [name, brand, price, description, image, thumbnail_image,
+    [name, brand, price, description, thumbnail_image, imagesJson,
      discount_percentage, category_id, stock, status]
   );
 
@@ -129,14 +211,19 @@ const updateProduct = async (id, data) => {
   const values = [];
 
   const allowed = [
-    'name', 'brand', 'price', 'description', 'image', 'thumbnail_image',
+    'name', 'brand', 'price', 'description', 'thumbnail_image', 'images',
     'discount_percentage', 'category_id', 'stock', 'status',
   ];
 
   allowed.forEach((key) => {
     if (data[key] !== undefined) {
+      let value = data[key];
+      // Convert images array to JSON string
+      if (key === 'images' && Array.isArray(value)) {
+        value = JSON.stringify(value);
+      }
       fields.push(`${key} = ?`);
-      values.push(data[key]);
+      values.push(value);
     }
   });
 

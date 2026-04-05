@@ -13,7 +13,7 @@ const CartPage = () => {
     try {
       setLoading(true);
       const response = await userCartServices.getCart();
-      setCartItems(response.data?.items || []);
+      setCartItems(response?.items || []);
     } catch (error) {
       console.error("Error fetching cart:", error);
     } finally {

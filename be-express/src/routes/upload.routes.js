@@ -12,7 +12,7 @@ router.post('/image', upload.single('image'), (req, res, next) => {
     return next(new AppError('No image file provided', 400));
   }
 
-  const imageUrl = `/uploads/${req.file.filename}`;
+  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
   res.status(201).json({ imageUrl });
 });
 

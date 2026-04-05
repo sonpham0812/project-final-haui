@@ -3,7 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 
 const getCart = catchAsync(async (req, res) => {
   const cart = await cartService.getCart(req.user.id);
-  res.json({ success: true, data: cart });
+  res.json(cart);
 });
 
 const addToCart = catchAsync(async (req, res) => {
@@ -20,7 +20,7 @@ const addToCart = catchAsync(async (req, res) => {
     product_id,
     quantity,
   });
-  res.json({ success: true, data: cart });
+  res.json(cart);
 });
 
 const updateCartItem = catchAsync(async (req, res) => {
@@ -37,7 +37,7 @@ const updateCartItem = catchAsync(async (req, res) => {
     product_id,
     quantity,
   });
-  res.json({ success: true, data: cart });
+  res.json(cart);
 });
 
 const removeFromCart = catchAsync(async (req, res) => {
@@ -45,12 +45,12 @@ const removeFromCart = catchAsync(async (req, res) => {
     req.user.id,
     req.params.product_id,
   );
-  res.json({ success: true, data: cart });
+  res.json(cart);
 });
 
 const clearCart = catchAsync(async (req, res) => {
   const cart = await cartService.clearCart(req.user.id);
-  res.json({ success: true, data: cart, message: "Cart cleared successfully" });
+  res.json({ ...cart, message: "Cart cleared successfully" });
 });
 
 module.exports = {

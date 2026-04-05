@@ -3,42 +3,55 @@ const catchAsync     = require('../utils/catchAsync');
 
 // ── Public ────────────────────────────────────────────────────────
 const getProducts = catchAsync(async (req, res) => {
-  const { page, limit, category_id, search } = req.query;
-  const result = await productService.getProducts({ page, limit, category_id, search });
-  res.json({ success: true, data: result });
+  const { page, limit, category_id, search, min_price, max_price, min_discount, sort_by } = req.query;
+  const result = await productService.getProducts({
+    page,
+    limit,
+    category_id,
+    search,
+    min_price,
+    max_price,
+    min_discount,
+    sort_by,
+  });
+  res.json(result);
 });
 
 const getProductById = catchAsync(async (req, res) => {
   const product = await productService.getProductById(req.params.id);
-  res.json({ success: true, data: product });
+  res.json(product);
 });
 
 // ── Admin ─────────────────────────────────────────────────────────
 const adminGetProducts = catchAsync(async (req, res) => {
-  const { page, limit, category_id, search } = req.query;
-  const result = await productService.adminGetProducts({ page, limit, category_id, search });
-  res.json({ success: true, data: result });
+  const { page, limit, category_id, search, min_price, max_price, min_discount, status, sort_by } = req.query;
+  const result = await productService.adminGetProducts({
+    page,
+    limit,
+    category_id,
+    search,
+    min_price,
+    max_price,
+    min_discount,
+    status,
+    sort_by,
+  });
+  res.json(result);
+});
+
+const adminGetProductById = catchAsync(async (req, res) => {
+  const product = await productService.adminGetProductById(req.params.id);
+  res.json(product);
 });
 
 const createProduct = catchAsync(async (req, res) => {
-  // If a file was uploaded, override the image field with its path
-  const data = { ...req.body };
-  if (req.file) {
-    data.image = `/uploads/${req.file.filename}`;
-  }
-
-  const product = await productService.createProduct(data);
-  res.status(201).json({ success: true, data: product });
+  const product = await productService.createProduct(req.body);
+  res.status(201).json(product);
 });
 
 const updateProduct = catchAsync(async (req, res) => {
-  const data = { ...req.body };
-  if (req.file) {
-    data.image = `/uploads/${req.file.filename}`;
-  }
-
-  const product = await productService.updateProduct(req.params.id, data);
-  res.json({ success: true, data: product });
+  const product = await productService.updateProduct(req.params.id, req.body);
+  res.json(product);
 });
 
 const deleteProduct = catchAsync(async (req, res) => {
@@ -48,8 +61,9 @@ const deleteProduct = catchAsync(async (req, res) => {
 
 module.exports = {
   getProducts,
-  getProductById,
   adminGetProducts,
+  getProductById,
+  adminGetProductById,
   createProduct,
   updateProduct,
   deleteProduct,

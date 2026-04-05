@@ -16,22 +16,20 @@ const Register = () => {
     try {
       const response = await publicAuthServices.register(values);
 
-      if (!response || !response.success) {
-        throw new Error(response?.message || "Không thể đăng ký");
+      if (!response || !response.id) {
+        throw new Error("Đăng ký thất bại");
       }
 
       message.success("Đăng ký thành công. Vui lòng đăng nhập!");
 
-      // Nếu server trả dữ liệu user (với role), có thể login tự động.
-      const userData = response.data || {};
-      if (userData?.id) {
-        login({
-          email: values.email,
-          role: userData.role || "USER",
-        });
-      }
+      // User mới luôn có role USER
+      login({
+        id: response.id,
+        email: values.email,
+        role: response.role || "USER",
+      });
 
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       console.error(err);
       message.error(err?.message || "Đăng ký thất bại");

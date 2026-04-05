@@ -7,10 +7,10 @@ const CartPopover = ({ onViewCart, cartItems }) => {
   return (
     <div className="cart-modal">
       {items?.length === 0 ? (
-        <p className="empty">Your shopping cart is empty.</p>
+        <p className="empty">Giỏ hàng của bạn đang trống.</p>
       ) : (
         <div>
-          <h4 className="title">Recently Added Items</h4>
+          <h4 className="title">Sản Phẩm Mới Thêm</h4>
 
           <div className="items">
             {items?.map((item, index) => (
@@ -19,9 +19,9 @@ const CartPopover = ({ onViewCart, cartItems }) => {
                 <div className="info">
                   <p className="name">{item.name}</p>
                   <p className="price">
-                    {item.price.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
+                    {item.price.toLocaleString("vi-VN", {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
                     })}
                     ₫
                   </p>
@@ -31,7 +31,7 @@ const CartPopover = ({ onViewCart, cartItems }) => {
           </div>
 
           {cartItems?.length > 10 && (
-            <p className="more">{cartItems.length - 10} more items...</p>
+            <p className="more">và {cartItems.length - 10} sản phẩm khác...</p>
           )}
 
           <Button
@@ -40,7 +40,7 @@ const CartPopover = ({ onViewCart, cartItems }) => {
             style={{ marginTop: 10 }}
             onClick={onViewCart}
           >
-            View My Shopping Cart
+            Xem Giỏ Hàng
           </Button>
         </div>
       )}

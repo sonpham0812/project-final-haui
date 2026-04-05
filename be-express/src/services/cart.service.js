@@ -25,7 +25,7 @@ const getCart = async (userId) => {
   const [items] = await db.query(
     `SELECT ci.product_id, ci.quantity,
             p.name, p.brand, p.price, p.discount_percentage,
-            p.image, p.thumbnail_image, p.stock, p.status
+            p.images, p.thumbnail_image, p.stock, p.status
        FROM cart_items ci
        JOIN products p ON p.id = ci.product_id
       WHERE ci.cart_id = ?`,
