@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { productServices } from "../../api/products";
 import {
   Button,
   Image,
@@ -12,6 +11,7 @@ import {
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { adminProductServices } from "../../../api";
 
 const { Option } = Select;
 
@@ -31,10 +31,10 @@ const ProductList = () => {
   const getData = async () => {
     try {
       setLoading(true);
-      const res = await productServices.getProducts();
-      setData(res);
+      const res = await adminProductServices.getAllProducts();
+      setData(res.data);
     } catch (error) {
-      message.error("Load product failed");
+      message.error("Load product failed", error);
     } finally {
       setLoading(false);
     }
@@ -42,36 +42,34 @@ const ProductList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await productServices.deleteProduct(id);
+      await adminProductServices.deleteProduct(id);
       message.success("Delete product successfully");
       getData();
     } catch (error) {
-      message.error("Delete product failed");
+      message.error("Delete product failed", error);
     }
   };
 
   const categories = useMemo(() => {
-    return ["all", ...new Set(data.map((item) => item.category))];
+    return [
+      { name: "all", id: "all" },
+      ...new Set(
+        data.map((item) => ({
+          id: item.category_id,
+          name: item.category_name,
+        })),
+      ),
+    ];
   }, [data]);
-
-  const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      const matchCategory = category === "all" || item.category === category;
-      const matchPrice =
-        item.price >= priceRange[0] && item.price <= priceRange[1];
-
-      return matchCategory && matchPrice;
-    });
-  }, [data, category, priceRange]);
 
   const columns = [
     {
       title: "Product",
-      dataIndex: "title",
-      sorter: (a, b) => a.title.localeCompare(b.title),
+      dataIndex: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (text, record) => (
         <div className="flex items-center gap-3">
-          <Image width={48} src={record.thumbnail} />
+          <Image width={48} src={record.thumbnail_image} />
           <Button type="link" href={`/product-details/${record.id}`}>
             {text}
           </Button>
@@ -86,21 +84,13 @@ const ProductList = () => {
     },
     {
       title: "Category",
-      dataIndex: "category",
+      dataIndex: "category_name",
       render: (cat) => <span className="text-gray-500">{cat}</span>,
     },
     {
-      title: "Tags",
-      dataIndex: "tags",
-      render: (tags) => (
-        <div className="flex flex-row gap-1">
-          {tags.map((tag) => (
-            <Tag key={tag} color="blue">
-              {tag}
-            </Tag>
-          ))}
-        </div>
-      ),
+      title: "Category",
+      dataIndex: "brand",
+      render: (cat) => <span className="text-gray-500">{cat}</span>,
     },
     {
       title: "Action",
@@ -113,8 +103,8 @@ const ProductList = () => {
             onClick={() => navigate(`/edit-product/${record.id}`)}
           />
           <Popconfirm
-            title="Delete product"
-            description="Are you sure to delete this product?"
+            title="Xoá sản phẩm"
+            description="Bạn có chắc chắn muốn xóa sản phẩm này?"
             okText="Yes"
             cancelText="No"
             onConfirm={() => handleDelete(record.id)}
@@ -143,8 +133,8 @@ const ProductList = () => {
             onChange={setCategory}
           >
             {categories.map((cat) => (
-              <Option key={cat} value={cat}>
-                {cat}
+              <Option key={cat.id} value={cat.id}>
+                {cat.name}
               </Option>
             ))}
           </Select>
@@ -170,7 +160,7 @@ const ProductList = () => {
         rowSelection={rowSelection}
         loading={loading}
         columns={columns}
-        dataSource={filteredData}
+        dataSource={data}
       />
     </div>
   );

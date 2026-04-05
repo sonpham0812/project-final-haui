@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Input,
   Select,
@@ -11,20 +11,10 @@ import {
   message,
 } from "antd";
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
-import { productServices } from "../../api/products";
-import { categoryServices } from "../../api/categories";
 import { useNavigate, useParams } from "react-router-dom";
+import { adminCategoryServices, adminProductServices, adminUploadServices } from "../../../api";
 
 const { TextArea } = Input;
-
-// save image to base 64
-const toBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-  });
 
 const normFile = (e) => {
   if (Array.isArray(e)) return e;
@@ -37,7 +27,6 @@ export default function AddProduct() {
   const { id } = useParams();
   const isEdit = Boolean(id);
 
-  const [tags, setTags] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
@@ -46,16 +35,15 @@ export default function AddProduct() {
     const fetchCategories = async () => {
       try {
         setLoadingCategory(true);
-        const data = await categoryServices.getAll();
+        const data = await adminCategoryServices.getAllCategories();
         setCategories(
-          data.map((item) => ({
+          data.items.map((item) => ({
             label: item.name,
             value: item.id,
-            slug: item.slug,
           })),
         );
       } catch {
-        message.error("Failed to load categories");
+        message.error("Không thể tải danh mục");
       } finally {
         setLoadingCategory(false);
       }
@@ -70,28 +58,25 @@ export default function AddProduct() {
     const fetchProduct = async () => {
       try {
         setLoadingProduct(true);
-        const product = await productServices.getProductDetails(id);
-
-        setTags(product.tags || []);
+        const product = await adminProductServices.getProductById(id);
 
         form.setFieldsValue({
-          title: product.title,
+          title: product.name,
           brand: product.brand,
           price: product.price,
           stock: product.stock,
-          discount: product.discountPercentage,
+          discount: product.discount_percentage,
           description: product.description,
-          category: product.categoryId,
-          dimensions: product.dimensions,
+          category: product.category_id,
           thumbnail: [
             {
               uid: "-1",
               name: "thumbnail",
               status: "done",
-              url: product.thumbnail,
+              url: product.thumbnail_image,
             },
           ],
-          images: (product.images || []).map((img, index) => ({
+          images: (product.images ?? []).map((img, index) => ({
             uid: index,
             name: `image-${index}`,
             status: "done",
@@ -111,51 +96,55 @@ export default function AddProduct() {
   useEffect(() => {
     if (!isEdit) {
       form.resetFields();
-      setTags([]);
     }
   }, [isEdit, form]);
 
   const handleSubmit = async (values) => {
     try {
-      const imagesBase64 = await Promise.all(
-        values.images.map((f) =>
-          f.originFileObj ? toBase64(f.originFileObj) : f.url,
-        ),
-      );
+      // Upload thumbnail
+      const thumbnailFile = values.thumbnail[0];
+      let thumbnailUrl = thumbnailFile.url; // If already uploaded
+      
+      if (thumbnailFile.originFileObj) {
+        const thumbRes = await adminUploadServices.uploadImage(thumbnailFile.originFileObj);
+        thumbnailUrl = thumbRes.imageUrl;
+      }
 
-      const thumbnailBase64 = values.thumbnail[0].originFileObj
-        ? await toBase64(values.thumbnail[0].originFileObj)
-        : values.thumbnail[0].url;
+      // Upload gallery images
+      const imageUrls = await Promise.all(
+        values.images.map(async (file) => {
+          // If already uploaded, return existing URL
+          if (file.url && !file.originFileObj) {
+            return file.url;
+          }
+          // Upload new image
+          const res = await adminUploadServices.uploadImage(file.originFileObj);
+          return res.imageUrl;
+        }),
+      );
 
       const categoryItem = categories.find(
         (item) => item.value === values.category,
       );
 
       const payload = {
-        title: values.title,
+        name: values.title,
         description: values.description,
         price: values.price,
-        discountPercentage: values.discount || 0,
+        discount_percentage: values.discount || 0,
         stock: values.stock,
-        category: categoryItem.slug,
-        categoryId: categoryItem.value,
+        category_id: categoryItem.value,
         brand: values.brand || "",
-        tags,
-        dimensions: values.dimensions || {},
-        images: imagesBase64,
-        thumbnail: thumbnailBase64,
+        thumbnail_image: thumbnailUrl,
+        images: imageUrls,
       };
 
       if (isEdit) {
-        await productServices.updateProduct(id, payload);
-        message.success("Update product successfully");
+        await adminProductServices.updateProduct(id, payload);
+        message.success("Cập nhật sản phẩm thành công");
       } else {
-        await productServices.addProduct({
-          ...payload,
-          rating: 0,
-          meta: { createdAt: new Date().toISOString() },
-        });
-        message.success("Add product successfully");
+        await adminProductServices.createProduct(payload);
+        message.success("Thêm sản phẩm thành công");
       }
 
       navigate("/product-list");
@@ -169,7 +158,7 @@ export default function AddProduct() {
     <div className="min-h-screen">
       <Card className="max-w-5xl mx-auto shadow-2xl rounded-3xl">
         <h1 className="text-3xl font-bold mb-6">
-          {isEdit ? "Edit Product" : "Add New Product"}
+          {isEdit ? "Chỉnh Sửa Sản Phẩm" : "Thêm Sản Phẩm Mới"}
         </h1>
 
         <Form
@@ -230,27 +219,6 @@ export default function AddProduct() {
             <TextArea rows={4} />
           </Form.Item>
 
-          <Divider orientation="left">Dimensions</Divider>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Form.Item name={["dimensions", "width"]} label="Width">
-              <InputNumber className="w-full" />
-            </Form.Item>
-            <Form.Item name={["dimensions", "height"]} label="Height">
-              <InputNumber className="w-full" />
-            </Form.Item>
-            <Form.Item name={["dimensions", "depth"]} label="Depth">
-              <InputNumber className="w-full" />
-            </Form.Item>
-          </div>
-
-          <Divider orientation="left">Tags</Divider>
-          <Select
-            mode="tags"
-            style={{ width: "100%" }}
-            value={tags}
-            onChange={setTags}
-          />
-
           <Divider orientation="left">Images</Divider>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -288,7 +256,7 @@ export default function AddProduct() {
 
           <div className="flex justify-center mt-10">
             <Button type="primary" size="large" htmlType="submit">
-              {isEdit ? "Update Product" : "Add Product"}
+              {isEdit ? "Cập Nhật Sản Phẩm" : "Thêm Sản Phẩm"}
             </Button>
           </div>
         </Form>
