@@ -3,25 +3,26 @@ import CategoryList from "./CategoryList";
 import HeaderTop from "./HeaderTop";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { publicCategoryServices } from "../../../api";
 import CartIcon from "../../../components/user/cart";
+import { useMount } from "../../../utils";
 
 const Header = () => {
   const [categoryItems, setCategoryItems] = useState([]);
 
   const getCategoryItems = async () => {
     const response = await publicCategoryServices.getAll();
-    const formattedItems = response.data.map((category) => ({
+    const formattedItems = response?.items?.map((category) => ({
       label: category.name,
       key: category.id,
     }));
     setCategoryItems(formattedItems);
   };
 
-  useEffect(() => {
+  useMount(() => {
     getCategoryItems();
-  }, []);
+  });
 
   const navigate = useNavigate();
 
@@ -54,9 +55,9 @@ const Header = () => {
         {/* Search */}
         <div className="search-categories">
           <Input.Search
-            placeholder="Search your preferred items here"
+            placeholder="Tìm kiếm sản phẩm bạn yêu thích"
             allowClear
-            enterButton="Search"
+            enterButton="Tìm Kiếm"
             size="large"
             onSearch={onSearch}
           />

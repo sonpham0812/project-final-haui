@@ -1,13 +1,21 @@
 import {
   BellFilled,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Input } from "antd";
 import "./index.scss";
+import { Link } from "react-router-dom";
 
 export default function Header({ toggleSidebar, isCollapsed }) {
+    const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
+    window.location.href = "/home";
+  };
+
   return (
     <div className="header">
       <div className="header-inner">
@@ -45,7 +53,11 @@ export default function Header({ toggleSidebar, isCollapsed }) {
             icon={<UserOutlined />}
             className="avatar-btn"
           />
+           <Link onClick={handleLogout} style={{ cursor: "pointer" }}>
+              <LogoutOutlined /> Đăng Xuất
+            </Link>
         </div>
+        
       </div>
     </div>
   );

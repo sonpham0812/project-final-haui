@@ -4,9 +4,19 @@ import {
   FacebookFilled,
   InstagramFilled,
   QuestionCircleFilled,
+  LogoutOutlined,
 } from "@ant-design/icons";
+import useAuth from "../../../hooks/useAuth";
 
 export default function HeaderTop() {
+  const { isAuthenticated, user } = useAuth();
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
+    window.location.href = "/home";
+  };
+
   return (
     <Flex
       justify="space-between"
@@ -14,10 +24,10 @@ export default function HeaderTop() {
       style={{ padding: "10px 20px" }}
     >
       <Flex gap="middle">
-        <Link to="/">Seller Center</Link>
-        <Link to="/">Download</Link>
+        <Link to="/home">Kênh Người Bán</Link>
+        <Link to="/home">Tải Ứng Dụng</Link>
         <Flex gap="4px" align="center">
-          <Link to="/">Follow us on</Link>
+          <Link to="/home">Theo dõi chúng tôi trên</Link>
           <a href="/">
             <FacebookFilled />
           </a>
@@ -32,10 +42,22 @@ export default function HeaderTop() {
           <a href="/">
             <QuestionCircleFilled />
           </a>
-          <Link to="/">Support</Link>
+          <Link to="/home">Hỗ Trợ</Link>
         </Flex>
-        <Link to="/">Register</Link>
-        <Link to="/">Login</Link>
+
+        {isAuthenticated ? (
+          <Flex gap="middle" align="center">
+            <span>Xin chào, {user?.name || "Người dùng"}</span>
+            <Link onClick={handleLogout} style={{ cursor: "pointer" }}>
+              <LogoutOutlined /> Đăng Xuất
+            </Link>
+          </Flex>
+        ) : (
+          <>
+            <Link to="/register">Đăng Ký</Link>
+            <Link to="/login">Đăng Nhập</Link>
+          </>
+        )}
       </Flex>
     </Flex>
   );
