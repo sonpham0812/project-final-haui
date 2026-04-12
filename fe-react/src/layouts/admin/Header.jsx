@@ -10,17 +10,17 @@ import "./index.scss";
 import { Link } from "react-router-dom";
 
 export default function Header({ toggleSidebar, isCollapsed }) {
-    const handleLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     window.location.href = "/home";
   };
 
   return (
-    <div className="header">
-      <div className="header-inner">
+    <div className="admin-header py-m px-xxl">
+      <div className="admin-header-inner">
         <div
-          className={`header-left ${isCollapsed ? "collapsed" : "expanded"}`}
+          className={`admin-header-left ${isCollapsed ? "collapsed" : "expanded"} flex gap-s`}
         >
           <div className="icon-wrapper">
             <Button
@@ -46,18 +46,17 @@ export default function Header({ toggleSidebar, isCollapsed }) {
             className="search-box"
           />
         </div>
-        <div className="header-right">
+        <div className="admin-header-right">
           <BellFilled className="bell-icon" />
           <Avatar
             style={{ backgroundColor: "#87d068" }}
             icon={<UserOutlined />}
             className="avatar-btn"
           />
-           <Link onClick={handleLogout} style={{ cursor: "pointer" }}>
-              <LogoutOutlined /> Đăng Xuất
-            </Link>
+          <Link onClick={handleLogout} style={{ cursor: "pointer" }}>
+            <LogoutOutlined /> Đăng Xuất
+          </Link>
         </div>
-        
       </div>
     </div>
   );

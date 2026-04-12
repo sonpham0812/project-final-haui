@@ -45,23 +45,26 @@ export default function Sidebar({ isCollapsed }) {
               selectedKeys={[selectedKey]}
               defaultOpenKeys={["product"]}
             >
-              <Item key="/dashboard" icon={<DashboardOutlined />}>
-                <Link to="/dashboard">Bảng Điều Khiển</Link>
+              <Item key="/admin/dashboard" icon={<DashboardOutlined />}>
+                <Link to="/admin/dashboard">Bảng Điều Khiển</Link>
               </Item>
               <SubMenu
                 key="product"
                 icon={<AppstoreOutlined />}
                 title="Sản Phẩm"
               >
-                <Item key="/product-list" icon={<UnorderedListOutlined />}>
-                  <Link to="/product-list">Danh Sách Sản Phẩm</Link>
+                <Item
+                  key="/admin/product-list"
+                  icon={<UnorderedListOutlined />}
+                >
+                  <Link to="/admin/product-list">Danh Sách Sản Phẩm</Link>
                 </Item>
-                <Item key="/add-product" icon={<PlusOutlined />}>
-                  <Link to="/add-product">Thêm Sản Phẩm</Link>
+                <Item key="/admin/add-product" icon={<PlusOutlined />}>
+                  <Link to="/admin/add-product">Thêm Sản Phẩm</Link>
                 </Item>
-                <Item key="/edit-product" icon={<EditOutlined />}>
-                  <Link to="/edit-product">Chỉnh Sửa Sản Phẩm</Link>
-                </Item>
+                {/* <Item key="/admin/edit-product" icon={<EditOutlined />}>
+                  <Link to="/admin/edit-product">Chỉnh Sửa Sản Phẩm</Link>
+                </Item> */}
               </SubMenu>
             </Menu>
           </div>
