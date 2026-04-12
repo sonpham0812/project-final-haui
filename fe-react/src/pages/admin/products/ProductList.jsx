@@ -100,7 +100,7 @@ const ProductList = () => {
           <Button
             type="primary"
             icon={<EditOutlined />}
-            onClick={() => navigate(`/edit-product/${record.id}`)}
+            onClick={() => navigate(`/admin/edit-product/${record.id}`)}
           />
           <Popconfirm
             title="Xoá sản phẩm"

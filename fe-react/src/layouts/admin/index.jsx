@@ -9,12 +9,12 @@ export default function Layout({ children }) {
     setIsCollapsed((prev) => !prev);
   };
   return (
-    <div className="layout-wrapper">
+    <div className="layout-wrapper min-w-screen">
       <Header toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
       <div className="layout-inner">
         <Sidebar isCollapsed={isCollapsed} />
         <div
-          className={`layout-content ${isCollapsed ? "collapsed" : "expanded"}`}
+          className={`layout-content ${isCollapsed ? "collapsed" : "expanded"} py-m`}
         >
           {children}
         </div>

@@ -26,7 +26,7 @@ const AppRoutes = () => {
         element={
           isAuthenticated ? (
             isAdmin ? (
-              <Navigate to="/admin" replace />
+              <Navigate to="/admin/dashboard" replace />
             ) : (
               <Navigate to="/home" replace />
             )

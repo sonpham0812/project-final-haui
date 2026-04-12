@@ -39,11 +39,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-sm shadow-lg">
-        <Title level={3} className="text-center mb-4">
-          Đăng ký
-        </Title>
+    <div className="min-h-screen flex align-center justify-center">
+      <Card className="w-full">
+        <Title level={3}>Đăng ký</Title>
 
         <Form layout="vertical" onFinish={onFinish}>
           <Form.Item
@@ -80,7 +78,10 @@ const Register = () => {
           </Form.Item>
 
           <div className="text-center">
-            Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+            <span>Đã có tài khoản? </span>
+            <Button color="primary" variant="link" href="/login">
+              Đăng nhập
+            </Button>
           </div>
         </Form>
       </Card>
