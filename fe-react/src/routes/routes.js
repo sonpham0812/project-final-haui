@@ -15,39 +15,39 @@ const routers = [
   { path: "/register", component: Register, layout: "auth" },
   { path: "/cart", component: CartPage, private: true, layout: "user" },
   {
-    path: "/admin",
+    path: "/admin/dashboard",
     component: AdminDashboard,
     private: true,
     role: "ADMIN",
     layout: "admin",
   },
   {
-    path: "/add-product",
+    path: "/admin/add-product",
     component: AddProduct,
     private: true,
     role: "ADMIN",
-    layout: "admin"
-  },
-   {
-    path: "/edit-product/:id",
-    component: AddProduct,
-    private: true,
-    role: "ADMIN",
-    layout: "admin"
+    layout: "admin",
   },
   {
-    path: "/product-list",
+    path: "/admin/edit-product/:id",
+    component: AddProduct,
+    private: true,
+    role: "ADMIN",
+    layout: "admin",
+  },
+  {
+    path: "/admin/product-list",
     component: ProductList,
     private: true,
     role: "ADMIN",
-    layout: "admin"
+    layout: "admin",
   },
   {
-    path: "/product-details/:id",
+    path: "/admin/product-details/:id",
     component: ProductDetail,
     private: true,
     role: "ADMIN",
-    layout: "admin"
+    layout: "admin",
   },
   { path: "*", component: NotFound },
 ];
