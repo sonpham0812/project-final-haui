@@ -57,7 +57,7 @@ const Login = () => {
 
       // Chuyển hướng dựa trên role
       if (userData.role === "ADMIN") {
-        navigate("/admin");
+        navigate("/admin/dashboard");
       } else {
         navigate("/home");
       }
@@ -70,11 +70,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-sm shadow-lg">
-        <Title level={3} className="text-center mb-4">
-          Đăng nhập
-        </Title>
+    <div className="min-h-screen flex align-center justify-center">
+      <Card className="w-full">
+        <Title level={3}>Đăng nhập</Title>
 
         <Form layout="vertical" onFinish={onFinish}>
           <Form.Item
@@ -103,7 +101,10 @@ const Login = () => {
           </Form.Item>
 
           <div className="text-center">
-            Chưa có tài khoản? <Link to="/register">Đăng ký</Link>
+            <span>Chưa có tài khoản? </span>
+            <Button color="primary" variant="link" href="/register">
+              Đăng ký
+            </Button>
           </div>
         </Form>
       </Card>
