@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Form, Input, Button, Card, Typography, message } from "antd";
 import { AuthContext } from "../../context/AuthContext";
 import { publicAuthServices } from "../../api";
+import { useLocation } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -22,6 +23,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ NEW
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -56,10 +58,12 @@ const Login = () => {
       message.success("Đăng nhập thành công");
 
       // Chuyển hướng dựa trên role
+      const redirectPath = location.state?.from;
+
       if (userData.role === "ADMIN") {
         navigate("/admin/dashboard");
       } else {
-        navigate("/home");
+        navigate(redirectPath || "/home");
       }
     } catch (err) {
       console.error(err);
