@@ -70,7 +70,7 @@ const ProductList = () => {
       render: (text, record) => (
         <div className="flex items-center gap-3">
           <Image width={48} src={record.thumbnail_image} />
-          <Button type="link" href={`/product-details/${record.id}`}>
+          <Button type="link" href={`/admin/product-details/${record.id}`}>
             {text}
           </Button>
         </div>

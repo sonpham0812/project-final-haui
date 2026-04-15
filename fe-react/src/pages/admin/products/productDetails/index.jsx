@@ -16,7 +16,8 @@ const ProductDetail = () => {
       try {
         const res = await adminProductServices.getProductById(id);
         setProduct(res);
-        setMainImage(res.thumbnail || res.images?.[0]);
+        const defaultImg = res.thumbnail_image || res.images?.[0] || "";
+        setMainImage(defaultImg);
       } catch (err) {
         console.error(err);
       } finally {
@@ -27,20 +28,18 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
-
   if (!product) return null;
 
-  const finalPrice = (
-    Number(product.price) *
-    (1 - Number(product.discount_percentage) / 100)
-  );
+  const finalPrice =
+    Number(product.price) * (1 - Number(product.discount_percentage) / 100);
 
- return (
-    <Spin
-      tip="Loading product details..."
-      size="large"
-      spinning={loading}
-    >
+  const images = [
+    ...(product.thumbnail_image ? [product.thumbnail_image] : []),
+    ...(product.images || []).filter((img) => img !== product.thumbnail_image),
+  ];
+
+  return (
+    <Spin tip="Loading product details..." size="large" spinning={loading}>
       <div className="product-wrapper">
         <div className="product-page">
           <div className="left">
@@ -49,7 +48,7 @@ const ProductDetail = () => {
             </div>
 
             <div className="image-list">
-              {product.images?.map((img, index) => (
+              {images?.map((img, index) => (
                 <img
                   key={index}
                   src={img}
@@ -85,7 +84,6 @@ const ProductDetail = () => {
             <div className="quantity-box">
               <span>{`Quantity: ${product.stock}`}</span>
             </div>
-
           </div>
         </div>
       </div>
