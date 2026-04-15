@@ -15,7 +15,11 @@ const CartPopover = ({ onViewCart, cartItems }) => {
           <div className="items">
             {items?.map((item, index) => (
               <div className="item" key={index}>
-                <img src={item.image} alt={item.name} className="item-img" />
+                <img
+                  src={item.thumbnail_image}
+                  alt={item.name}
+                  className="item-img"
+                />
                 <div className="info">
                   <p className="name">{item.name}</p>
                   <p className="price">

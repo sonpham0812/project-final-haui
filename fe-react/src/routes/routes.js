@@ -8,12 +8,18 @@ import CartPage from "../pages/user/cart";
 import AddProduct from "../pages/admin/products/AddProduct";
 import ProductList from "../pages/admin/products/ProductList";
 import ProductDetail from "../pages/admin/products/productDetails";
+import ProductDetailUser from "../pages/user/productDetails";
 
 const routers = [
   { path: "/home", component: Home, layout: "user" },
   { path: "/login", component: Login, layout: "auth" },
   { path: "/register", component: Register, layout: "auth" },
   { path: "/cart", component: CartPage, private: true, layout: "user" },
+  {
+    path: "/product-details/:id",
+    component: ProductDetailUser,
+    layout: "user",
+  },
   {
     path: "/admin/dashboard",
     component: AdminDashboard,

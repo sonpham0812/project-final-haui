@@ -92,19 +92,21 @@ const CartPage = () => {
     },
     {
       title: "Image",
-      dataIndex: "image",
-      render: (image, record) => (
-        <img
-          src={image}
-          alt={record.name}
-          style={{ height: 50, objectFit: "cover" }}
-        />
-      ),
+      dataIndex: "thumbnail_image",
+      render: (thumbnail_image, record) => {
+        return (
+          <img
+            src={thumbnail_image}
+            alt={record.name}
+            style={{ height: 50, objectFit: "cover" }}
+          />
+        );
+      },
     },
     {
       title: "Unit Price",
       dataIndex: "price",
-      render: (price) => `$${price.toFixed(2)}`,
+      render: (price) => `$${price}`,
     },
     {
       title: "Quantity",
@@ -133,7 +135,7 @@ const CartPage = () => {
     },
     {
       title: "Total Price",
-      render: (_, record) => `$${(record.price * record.quantity).toFixed(2)}`,
+      render: (_, record) => `$${record.price * record.quantity}`,
     },
     {
       title: "Actions",
@@ -177,7 +179,7 @@ const CartPage = () => {
 
           <div className="total-section">
             Total ({selectedItems.length} selected):{" "}
-            <span className="total-price">${totalAmount.toFixed(2)}</span>
+            <span className="total-price">${totalAmount}</span>
             <Button
               type="primary"
               size="large"

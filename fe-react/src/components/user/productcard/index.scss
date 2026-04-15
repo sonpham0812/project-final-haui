@@ -3,6 +3,7 @@
   border-radius: 10px;
   overflow: hidden;
   position: relative;
+  height: 100%;
 
   .ant-card-cover {
     border-radius: 0;
@@ -29,6 +30,7 @@
 .product-image {
   width: 100%;
   height: 240px;
+  display: block;
   object-fit: cover;
 }
 
