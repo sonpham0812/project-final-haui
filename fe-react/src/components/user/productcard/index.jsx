@@ -1,5 +1,5 @@
 import { Card } from "antd";
-import "./Product.scss";
+import "./index.scss";
 import { useNavigate } from "react-router-dom";
 
 const Product = (props) => {
@@ -7,7 +7,7 @@ const Product = (props) => {
   const realPrice = (price * (100 - discount)) / 100;
   const navigate = useNavigate();
   const onClick = () => {
-    navigate(`/product/${id}`);
+    navigate(`/product-details/${id}`);
   };
 
   return (
@@ -36,7 +36,7 @@ const Product = (props) => {
       <div className="price">
         <span className="old-price">{price}</span>
         <span className="new-price">{realPrice.toFixed(2)}</span>
-        <span className="discount">{`(${discount})`}</span>
+        <span className="discount">{`(${discount}%)`}</span>
       </div>
     </Card>
   );
