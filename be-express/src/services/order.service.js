@@ -9,25 +9,37 @@ const createOrder = async (userId, { address, phone, selectedItemIds }) => {
   if (!selectedItemIds || selectedItemIds.length === 0) {
     throw new AppError("No items selected", 400);
   }
-  // 1. Get cart items
-  const [cartRows] = await db.query("SELECT id FROM cart WHERE user_id = ?", [
+
+  // 1. Lấy cart_id của user (tạo nếu chưa có)
+  let [cartRows] = await db.query("SELECT id FROM cart WHERE user_id = ?", [
     userId,
   ]);
-  if (cartRows.length === 0) throw new AppError("Cart is empty", 400);
-
+  if (cartRows.length === 0) {
+    const [inserted] = await db.query("INSERT INTO cart (user_id) VALUES (?)", [
+      userId,
+    ]);
+    cartRows = [{ id: inserted.insertId }];
+  }
   const cartId = cartRows[0].id;
 
+  // 2. Lấy các items được chọn từ cart của user
+  const placeholders = selectedItemIds.map(() => "?").join(", ");
   const [items] = await db.query(
-    `SELECT ci.id, ci.product_id, ci.quantity, p.price, p.stock, p.status, p.name
+    `SELECT ci.product_id, ci.quantity, p.price, p.stock, p.status, p.name
        FROM cart_items ci
        JOIN products p ON p.id = ci.product_id
-      WHERE ci.cart_id = ? AND ci.id IN (?)`,
-    [cartId, selectedItemIds],
+      WHERE ci.cart_id = ? AND ci.product_id IN (${placeholders})`,
+    [cartId, ...selectedItemIds],
   );
 
-  if (items.length === 0) throw new AppError("Cart is empty", 400);
+  if (items.length === 0) {
+    throw new AppError("Không tìm thấy sản phẩm trong giỏ hàng", 400);
+  }
   if (items.length !== selectedItemIds.length) {
-    throw new AppError("Some items are invalid", 400);
+    throw new AppError(
+      "Một số sản phẩm không hợp lệ hoặc đã bị xóa khỏi giỏ hàng",
+      400,
+    );
   }
 
   // 3. Calculate amounts
@@ -75,10 +87,11 @@ const createOrder = async (userId, { address, phone, selectedItemIds }) => {
     }
 
     // 5. Clear cart
-    await conn.query("DELETE FROM cart_items WHERE cart_id = ? AND id IN (?)", [
-      cartId,
-      selectedItemIds,
-    ]);
+    const delPlaceholders = selectedItemIds.map(() => "?").join(", ");
+    await conn.query(
+      `DELETE FROM cart_items WHERE cart_id = ? AND product_id IN (${delPlaceholders})`,
+      [cartId, ...selectedItemIds],
+    );
 
     await conn.commit();
     return getOrderById(orderId, userId);
@@ -125,7 +138,7 @@ const getOrderById = async (orderId, userId = null) => {
   if (orders.length === 0) throw new AppError("Order not found", 404);
 
   const [items] = await db.query(
-    `SELECT oi.*, p.name, p.image, p.thumbnail_image, p.brand
+    `SELECT oi.*, p.name, p.thumbnail_image, p.brand
        FROM order_items oi
        LEFT JOIN products p ON p.id = oi.product_id
       WHERE oi.order_id = ?`,

@@ -1,9 +1,11 @@
 import { Button, Flex, Table, Spin, Empty, Modal } from "antd";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./index.scss";
 import { userCartServices } from "../../../api";
 
 const CartPage = () => {
+  const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -68,6 +70,15 @@ const CartPage = () => {
         }
       },
     });
+  };
+
+  // ----- Go to checkout -----
+  const handleCheckout = () => {
+    const selected = cartItems.filter((item) =>
+      selectedItems.includes(item.product_id)
+    );
+    localStorage.setItem("checkout_items", JSON.stringify(selected));
+    navigate("/checkout");
   };
 
   // ----- Select rows -----
@@ -185,6 +196,7 @@ const CartPage = () => {
               size="large"
               className="checkout-btn"
               disabled={selectedItems.length === 0}
+              onClick={handleCheckout}
             >
               Check Out
             </Button>
