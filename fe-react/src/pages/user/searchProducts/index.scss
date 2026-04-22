@@ -1,0 +1,86 @@
+.search-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  // ── Sidebar ───────────────────────────────────────────────────
+  .search-sidebar {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    position: sticky;
+    top: 16px;
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 4px;
+      color: #ee4d2d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-group {
+      margin-bottom: 4px;
+
+      .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 8px;
+      }
+
+      .price-inputs {
+        display: flex;
+        align-items: center;
+        gap: 0;
+
+        .price-sep {
+          flex-shrink: 0;
+          width: 20px;
+          text-align: center;
+          color: #aaa;
+        }
+      }
+    }
+  }
+
+  // ── Results area ──────────────────────────────────────────────
+  .search-results {
+    .search-results-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      h2 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0;
+
+        .search-keyword {
+          color: #ee4d2d;
+        }
+      }
+
+      .result-count {
+        font-size: 13px;
+        color: #888;
+      }
+    }
+
+    .search-loading {
+      display: flex;
+      justify-content: center;
+      padding: 80px 0;
+    }
+
+    .search-pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 32px;
+      padding-bottom: 16px;
+    }
+  }
+}

@@ -1,13 +1,22 @@
-const orderService = require('../services/order.service');
-const catchAsync   = require('../utils/catchAsync');
+const orderService = require("../services/order.service");
+const catchAsync = require("../utils/catchAsync");
 
 // ── User controllers ──────────────────────────────────────────────
 const createOrder = catchAsync(async (req, res) => {
-  const { address, phone } = req.body;
-  if (!address || !phone) {
-    return res.status(400).json({ success: false, message: 'address and phone are required' });
+  const { address, phone, selectedItemIds } = req.body;
+  if (!address || !phone || !selectedItemIds) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "address, phone, and selectedItemIds are required",
+      });
   }
-  const order = await orderService.createOrder(req.user.id, { address, phone });
+  const order = await orderService.createOrder(req.user.id, {
+    address,
+    phone,
+    selectedItemIds,
+  });
   res.status(201).json(order);
 });
 
@@ -41,7 +50,9 @@ const adminGetOrderById = catchAsync(async (req, res) => {
 const adminUpdateStatus = catchAsync(async (req, res) => {
   const { status } = req.body;
   if (!status) {
-    return res.status(400).json({ success: false, message: 'status is required' });
+    return res
+      .status(400)
+      .json({ success: false, message: "status is required" });
   }
   const order = await orderService.adminUpdateStatus(req.params.id, status);
   res.json(order);

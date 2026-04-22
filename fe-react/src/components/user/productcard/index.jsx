@@ -32,7 +32,6 @@ const Product = (props) => {
       </div>
 
       <div className="title">{name}</div>
-
       <div className="price">
         <span className="old-price">{price}</span>
         <span className="new-price">{realPrice.toFixed(2)}</span>
