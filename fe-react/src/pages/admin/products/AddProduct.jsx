@@ -12,7 +12,11 @@ import {
 } from "antd";
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import { adminCategoryServices, adminProductServices, adminUploadServices } from "../../../api";
+import {
+  adminCategoryServices,
+  adminProductServices,
+  adminUploadServices,
+} from "../../../api";
 
 const { TextArea } = Input;
 
@@ -104,9 +108,11 @@ export default function AddProduct() {
       // Upload thumbnail
       const thumbnailFile = values.thumbnail[0];
       let thumbnailUrl = thumbnailFile.url; // If already uploaded
-      
+
       if (thumbnailFile.originFileObj) {
-        const thumbRes = await adminUploadServices.uploadImage(thumbnailFile.originFileObj);
+        const thumbRes = await adminUploadServices.uploadImage(
+          thumbnailFile.originFileObj,
+        );
         thumbnailUrl = thumbRes.imageUrl;
       }
 
@@ -147,7 +153,7 @@ export default function AddProduct() {
         message.success("Thêm sản phẩm thành công");
       }
 
-      navigate("/product-list");
+      navigate("/admin/product-list");
     } catch (error) {
       console.error(error);
       message.error("Submit failed");

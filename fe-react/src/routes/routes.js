@@ -9,12 +9,16 @@ import AddProduct from "../pages/admin/products/AddProduct";
 import ProductList from "../pages/admin/products/ProductList";
 import ProductDetail from "../pages/admin/products/productDetails";
 import ProductDetailUser from "../pages/user/productDetails";
+import CheckoutPage from "../pages/user/checkout";
+import SearchPage from "../pages/user/searchProducts";
 
 const routers = [
   { path: "/home", component: Home, layout: "user" },
   { path: "/login", component: Login, layout: "auth" },
   { path: "/register", component: Register, layout: "auth" },
   { path: "/cart", component: CartPage, private: true, layout: "user" },
+  { path: "/checkout", component: CheckoutPage, private: true, layout: "user" },
+  { path: "/search", component: SearchPage, layout: "user" },
   {
     path: "/product-details/:id",
     component: ProductDetailUser,

@@ -28,7 +28,7 @@ const Header = () => {
 
   const onSearch = (value) => {
     if (value.trim() !== "") {
-      navigate(`/search/${value}`);
+      navigate(`/search?search=${encodeURIComponent(value.trim())}`);
     }
   };
 

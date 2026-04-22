@@ -50,8 +50,6 @@ const Home = () => {
             ...prev,
             [cat.id]: response?.data || [],
           }));
-
-          console.log("Products for category", cat.id, response);
         } finally {
           setLoadingMap((prev) => ({ ...prev, [cat.id]: false }));
         }
@@ -59,8 +57,7 @@ const Home = () => {
     );
   };
 
-  const onClickViewAll = (id) => navigate(`/${id}`);
-  console.log(categoryProducts);
+  const onClickViewAll = (id) => navigate(`/search?category_id=${id}`);
 
   return (
     <div className="home-page">
