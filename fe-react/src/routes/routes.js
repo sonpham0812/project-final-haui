@@ -2,17 +2,19 @@
 import Home from "../pages/user/Home";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import AdminDashboard from "../pages/admin/Dashboard";
+import AdminDashboard from "../pages/admin/dashboard";
 import NotFound from "../pages/NotFound";
 import CartPage from "../pages/user/cart";
-import AddProduct from "../pages/admin/products/AddProduct";
-import ProductList from "../pages/admin/products/ProductList";
 import ProductDetail from "../pages/admin/products/productDetails";
 import ProductDetailUser from "../pages/user/productDetails";
 import CheckoutPage from "../pages/user/checkout";
 import SearchPage from "../pages/user/searchProducts";
 import ProfilePage from "../pages/user/profile";
 import OrderDetailPage from "../pages/user/orderDetail";
+import AdminOrderList from "../pages/admin/orders/orderList";
+import AdminOrderDetail from "../pages/admin/orders/orderDetail";
+import AddProduct from "../pages/admin/products/addProduct";
+import ProductList from "../pages/admin/products/productList";
 
 const routers = [
   { path: "/home", component: Home, layout: "user" },
@@ -59,6 +61,20 @@ const routers = [
   {
     path: "/admin/product-details/:id",
     component: ProductDetail,
+    private: true,
+    role: "ADMIN",
+    layout: "admin",
+  },
+  {
+    path: "/admin/orders",
+    component: AdminOrderList,
+    private: true,
+    role: "ADMIN",
+    layout: "admin",
+  },
+  {
+    path: "/admin/orders/:id",
+    component: AdminOrderDetail,
     private: true,
     role: "ADMIN",
     layout: "admin",
