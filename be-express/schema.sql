@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS products (
   discount_percentage  TINYINT UNSIGNED NOT NULL DEFAULT 0,
   category_id          INT,
   stock                INT            NOT NULL DEFAULT 0,
+  sold_count           INT            NOT NULL DEFAULT 0,
   status               ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
   created_at           DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at           DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -55,13 +56,16 @@ CREATE TABLE IF NOT EXISTS products (
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS orders (
   id            INT AUTO_INCREMENT PRIMARY KEY,
+  order_code    VARCHAR(20)    NOT NULL UNIQUE,
   user_id       INT            NOT NULL,
+  name          VARCHAR(255)   NOT NULL,
   total_amount  DECIMAL(15, 0) NOT NULL,
   shipping_fee  DECIMAL(15, 0) NOT NULL DEFAULT 0,
   address       VARCHAR(500)   NOT NULL,
   phone         VARCHAR(20)    NOT NULL,
   status        ENUM('PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELED') NOT NULL DEFAULT 'PENDING',
   created_at    DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
