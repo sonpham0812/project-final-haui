@@ -11,14 +11,18 @@ import ProductDetail from "../pages/admin/products/productDetails";
 import ProductDetailUser from "../pages/user/productDetails";
 import CheckoutPage from "../pages/user/checkout";
 import SearchPage from "../pages/user/searchProducts";
+import ProfilePage from "../pages/user/profile";
+import OrderDetailPage from "../pages/user/orderDetail";
 
 const routers = [
   { path: "/home", component: Home, layout: "user" },
   { path: "/login", component: Login, layout: "auth" },
   { path: "/register", component: Register, layout: "auth" },
   { path: "/cart", component: CartPage, private: true, layout: "user" },
-  { path: "/checkout", component: CheckoutPage, private: true, layout: "user" },
+  { path: "/checkout", component: CheckoutPage, private: true },
   { path: "/search", component: SearchPage, layout: "user" },
+  { path: "/profile", component: ProfilePage, private: true },
+  { path: "/order/:id", component: OrderDetailPage, private: true },
   {
     path: "/product-details/:id",
     component: ProductDetailUser,
