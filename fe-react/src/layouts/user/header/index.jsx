@@ -31,6 +31,11 @@ const Header = () => {
   const onSearch = (value) => {
     if (value.trim() !== "") {
       navigate(`/search?search=${encodeURIComponent(value.trim())}`);
+    } else {
+      const currentParams = new URLSearchParams(window.location.search);
+      currentParams.delete("search");
+      const rest = currentParams.toString();
+      navigate(`/search${rest ? `?${rest}` : ""}`);
     }
   };
 

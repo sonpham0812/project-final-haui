@@ -1,0 +1,53 @@
+.admin-order-detail-loading {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-order-detail-page {
+  background: #f5f5f5;
+  min-height: 100%;
+
+  // Override actions alignment — admin có nhiều nút, căn giữa đẹp hơn
+  .order-detail__actions {
+    justify-content: center;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+}
+
+.admin-order-detail__topbar {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 52px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 4px;
+}
+
+.admin-order-detail__back {
+  background: none;
+  border: none;
+  color: #ee4d2d;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font-weight: 500;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.admin-order-detail__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+}

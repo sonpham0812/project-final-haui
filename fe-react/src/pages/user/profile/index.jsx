@@ -62,17 +62,6 @@ const formatPrice = (price) =>
     price,
   );
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 // ─── Single order card ────────────────────────────────────────────
 const OrderCard = ({ order, onNavigate }) => {
   const [expanded, setExpanded] = useState(false);
@@ -82,7 +71,6 @@ const OrderCard = ({ order, onNavigate }) => {
   const hasMore = extraItems.length > 0;
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div className="order-card" onClick={() => onNavigate(order.id)}>
       {/* Order header */}
       <div className="order-card__header">

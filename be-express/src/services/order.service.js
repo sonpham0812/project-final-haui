@@ -301,7 +301,7 @@ const adminGetOrders = async ({ page = 1, limit = 20, status }) => {
 // Admin: update order status with valid transitions
 // ----------------------------------------------------------------
 const VALID_TRANSITIONS = {
-  PENDING: ["CONFIRMED"],
+  PENDING: ["CONFIRMED", "CANCELED"],
   CONFIRMED: ["COMPLETED"],
 };
 
