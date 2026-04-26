@@ -25,6 +25,7 @@ const Register = () => {
       // User mới luôn có role USER
       login({
         id: response.id,
+        name: values.name,
         email: values.email,
         role: response.role || "USER",
       });
