@@ -23,7 +23,7 @@ const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // ── filter state (committed → trigger API) ─────────────────────
-  const [search] = useState(() => searchParams.get("search") || "");
+  const search = searchParams.get("search") || "";
   const [categoryId, setCategoryId] = useState(
     () => searchParams.get("category_id") || undefined,
   );
@@ -97,7 +97,10 @@ const SearchPage = () => {
     <div className="search-page">
       <Row gutter={24}>
         {/* ── Sidebar bộ lọc ── */}
-        <Col span={6}>
+        <Col
+          span={6}
+          style={{ alignSelf: "flex-start", position: "sticky", top: 198 }}
+        >
           <div className="search-sidebar">
             <h3>Bộ lọc tìm kiếm</h3>
             <Divider />
