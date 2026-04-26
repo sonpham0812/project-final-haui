@@ -3,9 +3,30 @@ const AppError = require("../utils/AppError");
 const { calculateShippingFee } = require("../utils/shipping");
 
 // ----------------------------------------------------------------
+// Generate unique order_code: VN + 6 random digits
+// ----------------------------------------------------------------
+const generateOrderCode = async () => {
+  let code;
+  let exists = true;
+  while (exists) {
+    const digits = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
+    code = `VN${digits}`;
+    const [[{ count }]] = await db.query(
+      "SELECT COUNT(*) AS count FROM orders WHERE order_code = ?",
+      [code],
+    );
+    exists = count > 0;
+  }
+  return code;
+};
+
+// ----------------------------------------------------------------
 // Create order from current cart
 // ----------------------------------------------------------------
-const createOrder = async (userId, { address, phone, selectedItemIds }) => {
+const createOrder = async (
+  userId,
+  { address, phone, name, selectedItemIds },
+) => {
   if (!selectedItemIds || selectedItemIds.length === 0) {
     throw new AppError("No items selected", 400);
   }
@@ -46,6 +67,7 @@ const createOrder = async (userId, { address, phone, selectedItemIds }) => {
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const shippingFee = calculateShippingFee(subtotal);
   const totalAmount = subtotal + shippingFee;
+  const orderCode = await generateOrderCode();
 
   // 4. Persist inside a transaction
   const conn = await db.getConnection();
@@ -69,9 +91,9 @@ const createOrder = async (userId, { address, phone, selectedItemIds }) => {
       }
     }
     const [orderResult] = await conn.query(
-      `INSERT INTO orders (user_id, total_amount, shipping_fee, address, phone, status)
-       VALUES (?, ?, ?, ?, ?, 'PENDING')`,
-      [userId, totalAmount, shippingFee, address, phone],
+      `INSERT INTO orders (order_code, user_id, name, total_amount, shipping_fee, address, phone, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
+      [orderCode, userId, name, totalAmount, shippingFee, address, phone],
     );
     const orderId = orderResult.insertId;
 
@@ -80,10 +102,10 @@ const createOrder = async (userId, { address, phone, selectedItemIds }) => {
         "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
         [orderId, item.product_id, item.quantity, item.price],
       );
-      await conn.query("UPDATE products SET stock = stock - ? WHERE id = ?", [
-        item.quantity,
-        item.product_id,
-      ]);
+      await conn.query(
+        "UPDATE products SET stock = stock - ?, sold_count = sold_count + ? WHERE id = ?",
+        [item.quantity, item.quantity, item.product_id],
+      );
     }
 
     // 5. Clear cart
@@ -104,23 +126,74 @@ const createOrder = async (userId, { address, phone, selectedItemIds }) => {
 };
 
 // ----------------------------------------------------------------
+// User: count orders grouped by status
+// ----------------------------------------------------------------
+const getUserOrderCounts = async (userId) => {
+  const [rows] = await db.query(
+    `SELECT status, COUNT(*) AS count
+       FROM orders
+      WHERE user_id = ?
+      GROUP BY status`,
+    [userId],
+  );
+
+  const result = { PENDING: 0, CONFIRMED: 0, COMPLETED: 0, CANCELED: 0 };
+  rows.forEach(({ status, count }) => {
+    if (result[status] !== undefined) result[status] = Number(count);
+  });
+  return result;
+};
+
+// ----------------------------------------------------------------
 // User: list own orders
 // ----------------------------------------------------------------
-const getUserOrders = async (userId, { status, page = 1, limit = 10 }) => {
-  const offset = (page - 1) * limit;
+const getUserOrders = async (userId, { status, page = 1, limit = 5 } = {}) => {
+  const offset = (page - 1) * Number(limit);
   const params = [userId];
-  let where = "WHERE user_id = ?";
+  let where = "WHERE o.user_id = ?";
 
   if (status) {
-    where += " AND status = ?";
+    where += " AND o.status = ?";
     params.push(status);
   }
 
+  const [[{ total }]] = await db.query(
+    `SELECT COUNT(*) AS total FROM orders o ${where}`,
+    params,
+  );
+
   const [rows] = await db.query(
-    `SELECT * FROM orders ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+    `SELECT o.* FROM orders o ${where} ORDER BY o.created_at DESC LIMIT ? OFFSET ?`,
     [...params, Number(limit), offset],
   );
-  return rows;
+
+  if (rows.length > 0) {
+    const orderIds = rows.map((r) => r.id);
+    const itemPlaceholders = orderIds.map(() => "?").join(", ");
+    const [items] = await db.query(
+      `SELECT oi.*, p.name, p.thumbnail_image
+         FROM order_items oi
+         LEFT JOIN products p ON p.id = oi.product_id
+        WHERE oi.order_id IN (${itemPlaceholders})`,
+      orderIds,
+    );
+    const itemsByOrder = {};
+    items.forEach((item) => {
+      if (!itemsByOrder[item.order_id]) itemsByOrder[item.order_id] = [];
+      itemsByOrder[item.order_id].push(item);
+    });
+    rows.forEach((row) => {
+      row.items = itemsByOrder[row.id] || [];
+    });
+  }
+
+  return {
+    data: rows,
+    total,
+    page: Number(page),
+    limit: Number(limit),
+    totalPages: Math.ceil(total / Number(limit)),
+  };
 };
 
 // ----------------------------------------------------------------
@@ -256,6 +329,7 @@ const adminUpdateStatus = async (orderId, newStatus) => {
 module.exports = {
   createOrder,
   getUserOrders,
+  getUserOrderCounts,
   getOrderById,
   cancelOrder,
   adminGetOrders,

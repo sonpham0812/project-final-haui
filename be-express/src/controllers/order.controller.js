@@ -3,26 +3,37 @@ const catchAsync = require("../utils/catchAsync");
 
 // ── User controllers ──────────────────────────────────────────────
 const createOrder = catchAsync(async (req, res) => {
-  const { address, phone, selectedItemIds } = req.body;
-  if (!address || !phone || !selectedItemIds) {
+  const { address, phone, name, selectedItemIds } = req.body;
+  if (!address || !phone || !name) {
     return res
       .status(400)
       .json({
         success: false,
-        message: "address, phone, and selectedItemIds are required",
+        message: "address, phone and name are required",
       });
   }
   const order = await orderService.createOrder(req.user.id, {
     address,
     phone,
+    name,
     selectedItemIds,
   });
   res.status(201).json(order);
 });
 
 const getUserOrders = catchAsync(async (req, res) => {
-  const orders = await orderService.getUserOrders(req.user.id);
-  res.json(orders);
+  const { status, page, limit } = req.query;
+  const result = await orderService.getUserOrders(req.user.id, {
+    status,
+    page,
+    limit,
+  });
+  res.json(result);
+});
+
+const getUserOrderCounts = catchAsync(async (req, res) => {
+  const counts = await orderService.getUserOrderCounts(req.user.id);
+  res.json(counts);
 });
 
 const getOrderById = catchAsync(async (req, res) => {
@@ -61,6 +72,7 @@ const adminUpdateStatus = catchAsync(async (req, res) => {
 module.exports = {
   createOrder,
   getUserOrders,
+  getUserOrderCounts,
   getOrderById,
   cancelOrder,
   adminGetOrders,

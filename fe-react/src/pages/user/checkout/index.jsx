@@ -122,7 +122,7 @@ const CheckoutPage = () => {
   };
 
   const handleSubmit = async (values) => {
-    const { phone, province: prov, district, addressDetail } = values;
+    const { phone, province: prov, district, addressDetail, fullName } = values;
     const fullAddress = `${addressDetail}, ${district}, ${prov}`;
     const selectedItemIds = items.map((i) => i.product_id);
 
@@ -130,6 +130,7 @@ const CheckoutPage = () => {
       setSubmitting(true);
       await userOrderServices.createOrder({
         address: fullAddress,
+        name: fullName,
         phone,
         selectedItemIds,
       });
