@@ -9,6 +9,7 @@ import {
   ProfileOutlined,
   PlusOutlined,
   EditOutlined,
+  ShoppingOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./index.scss";
@@ -21,12 +22,11 @@ export default function Sidebar({ isCollapsed }) {
 
   const selectedKey = (() => {
     const p = location?.pathname || "/";
-    if (p.includes("/product-list")) return "/product-list";
-    if (p.includes("/add-product")) return "/add-product";
-    if (p.includes("/ecommerce")) return "/ecommerce";
-    if (p.includes("/dashboard")) return "/dashboard";
-    if (p.includes("/edit-product")) return "/edit-product";
-    return "/dashboard";
+    if (p.includes("/product-list")) return "/admin/product-list";
+    if (p.includes("/add-product")) return "/admin/add-product";
+    if (p.includes("/admin/orders")) return "/admin/orders";
+    if (p.includes("/dashboard")) return "/admin/dashboard";
+    return "/admin/dashboard";
   })();
 
   return (
@@ -43,7 +43,7 @@ export default function Sidebar({ isCollapsed }) {
               mode="inline"
               inlineCollapsed={isCollapsed}
               selectedKeys={[selectedKey]}
-              defaultOpenKeys={["product"]}
+              defaultOpenKeys={["product", "order"]}
             >
               <Item key="/admin/dashboard" icon={<DashboardOutlined />}>
                 <Link to="/admin/dashboard">Bảng Điều Khiển</Link>
@@ -62,9 +62,11 @@ export default function Sidebar({ isCollapsed }) {
                 <Item key="/admin/add-product" icon={<PlusOutlined />}>
                   <Link to="/admin/add-product">Thêm Sản Phẩm</Link>
                 </Item>
-                {/* <Item key="/admin/edit-product" icon={<EditOutlined />}>
-                  <Link to="/admin/edit-product">Chỉnh Sửa Sản Phẩm</Link>
-                </Item> */}
+              </SubMenu>
+              <SubMenu key="order" icon={<ShoppingOutlined />} title="Đơn Hàng">
+                <Item key="/admin/orders" icon={<UnorderedListOutlined />}>
+                  <Link to="/admin/orders">Danh Sách Đơn Hàng</Link>
+                </Item>
               </SubMenu>
             </Menu>
           </div>
