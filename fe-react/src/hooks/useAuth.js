@@ -1,13 +1,21 @@
 // hooks/useAuth.js
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { hasRole, isAdmin, isRegularUser, getUserId, getUserEmail, getUserRole } from "../utils";
+import {
+  hasRole,
+  isAdmin,
+  isRegularUser,
+  getUserId,
+  getUserEmail,
+  getUserRole,
+} from "../utils";
 
 const useAuth = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   return {
     user,
+    logout,
     isAuthenticated: !!user,
     isAdmin: isAdmin(),
     isRegularUser: isRegularUser(),

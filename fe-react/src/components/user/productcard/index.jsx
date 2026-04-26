@@ -3,7 +3,8 @@ import "./index.scss";
 import { useNavigate } from "react-router-dom";
 
 const Product = (props) => {
-  const { category, image, brand, name, price, discount, id } = props;
+  const { category, image, brand, name, price, discount, id, soldCount } =
+    props;
   const realPrice = (price * (100 - discount)) / 100;
   const navigate = useNavigate();
   const onClick = () => {
@@ -32,11 +33,18 @@ const Product = (props) => {
       </div>
 
       <div className="title">{name}</div>
+
       <div className="price">
         <span className="old-price">{price}</span>
         <span className="new-price">{realPrice.toFixed(2)}</span>
         <span className="discount">{`(${discount}%)`}</span>
       </div>
+
+      {soldCount !== undefined && (
+        <div className="sold-count">
+          Đã bán: {soldCount.toLocaleString("vi-VN")}
+        </div>
+      )}
     </Card>
   );
 };

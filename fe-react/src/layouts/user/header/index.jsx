@@ -1,4 +1,4 @@
-import { Button, Flex, Input } from "antd";
+import { Avatar, Button, Flex, Input, Tooltip } from "antd";
 import CategoryList from "./CategoryList";
 import HeaderTop from "./HeaderTop";
 import { useNavigate } from "react-router-dom";
@@ -7,9 +7,11 @@ import { useState } from "react";
 import { publicCategoryServices } from "../../../api";
 import CartIcon from "../../../components/user/cart";
 import { useMount } from "../../../utils";
+import useAuth from "../../../hooks/useAuth";
 
 const Header = () => {
   const [categoryItems, setCategoryItems] = useState([]);
+  const { user, isAuthenticated } = useAuth();
 
   const getCategoryItems = async () => {
     const response = await publicCategoryServices.getAll();
@@ -35,6 +37,11 @@ const Header = () => {
   const onClick = (category) => {
     navigate(`/${category}`);
   };
+
+  const avatarLetter =
+    user?.name?.charAt(0)?.toUpperCase() ||
+    user?.email?.charAt(0)?.toUpperCase() ||
+    "U";
 
   return (
     <div className="header py-m bg-main">
@@ -76,7 +83,27 @@ const Header = () => {
           </Flex>
         </div>
 
-        <CartIcon />
+        <Flex align="center" gap={16}>
+          <CartIcon />
+          {isAuthenticated && (
+            <Tooltip title="Trang cá nhân" placement="bottom">
+              <Avatar
+                className="header-user-avatar"
+                size={42}
+                onClick={() => navigate("/profile")}
+                style={{
+                  backgroundColor: "#f56a00",
+                  cursor: "pointer",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  flexShrink: 0,
+                }}
+              >
+                {avatarLetter}
+              </Avatar>
+            </Tooltip>
+          )}
+        </Flex>
       </Flex>
     </div>
   );

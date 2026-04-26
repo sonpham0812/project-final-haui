@@ -105,6 +105,7 @@ const Home = () => {
                           price={p.price}
                           discount={p.discount_percentage}
                           image={p.thumbnail_image}
+                          soldCount={p.sold_count}
                         />
                       </Col>
                     ))
