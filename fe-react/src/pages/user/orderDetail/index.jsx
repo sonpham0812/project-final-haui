@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Modal, Spin, message } from "antd";
-import { ArrowLeftOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { userOrderServices } from "../../../api";
 import OrderDetailContent from "../../../components/orderDetail";
 import "./index.scss";
@@ -37,8 +40,13 @@ const UserOrderDetailPage = () => {
       icon: <ExclamationCircleOutlined style={{ color: "#ff4d4f" }} />,
       content: (
         <div>
-          <p>Bạn có chắc chắn muốn hủy đơn hàng <strong>#{order?.order_code}</strong> không?</p>
-          <p style={{ color: "#666", fontSize: 13 }}>Hành động này không thể hoàn tác.</p>
+          <p>
+            Bạn có chắc chắn muốn hủy đơn hàng{" "}
+            <strong>#{order?.order_code}</strong> không?
+          </p>
+          <p style={{ color: "#666", fontSize: 13 }}>
+            Hành động này không thể hoàn tác.
+          </p>
         </div>
       ),
       okText: "Hủy đơn hàng",
@@ -52,7 +60,9 @@ const UserOrderDetailPage = () => {
           message.success("Đã hủy đơn hàng thành công");
           navigate("/profile?tab=CANCELED");
         } catch (err) {
-          message.error(err?.response?.data?.message || "Hủy đơn hàng thất bại");
+          message.error(
+            err?.response?.data?.message || "Hủy đơn hàng thất bại",
+          );
         } finally {
           setCancelling(false);
         }
@@ -84,13 +94,6 @@ const UserOrderDetailPage = () => {
 
   return (
     <div className="order-detail-page">
-      <div className="order-detail__topbar">
-        <button className="order-detail__back" onClick={() => navigate(-1)}>
-          <ArrowLeftOutlined /> Quay lại
-        </button>
-        <span className="order-detail__topbar-title">Chi tiết đơn hàng</span>
-        <div />
-      </div>
       <OrderDetailContent order={order} actions={cancelAction} />
     </div>
   );

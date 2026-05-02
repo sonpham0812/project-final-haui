@@ -5,6 +5,7 @@ import routers from "./routes";
 import ProtectedRoute from "./ProtectRoute";
 import AdminLayout from "../layouts/admin";
 import UserLayout from "../layouts/user";
+import UserAccountLayout from "../layouts/userAccount";
 import AuthLayout from "../layouts/auth";
 import useAuth from "../hooks/useAuth";
 
@@ -12,6 +13,12 @@ const getLayout = (layout, children) => {
   if (layout === "admin") return <AdminLayout>{children}</AdminLayout>;
   if (layout === "user") return <UserLayout>{children}</UserLayout>;
   if (layout === "auth") return <AuthLayout>{children}</AuthLayout>;
+  if (layout === "userAccount")
+    return (
+      <UserLayout>
+        <UserAccountLayout>{children}</UserAccountLayout>
+      </UserLayout>
+    );
   return children;
 };
 
@@ -47,9 +54,7 @@ const AppRoutes = () => {
         // bọc auth
         if (route.private || route.role) {
           element = (
-            <ProtectedRoute role={route.role}>
-              {element}
-            </ProtectedRoute>
+            <ProtectedRoute role={route.role}>{element}</ProtectedRoute>
           );
         }
 

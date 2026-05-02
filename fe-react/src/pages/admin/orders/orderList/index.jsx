@@ -211,7 +211,7 @@ const AdminOrderList = () => {
                   loading={busy}
                   style={{ background: "#52c41a", borderColor: "#52c41a" }}
                 >
-                  Hoàn thành
+                  Hoàn thành đơn
                 </Button>
               </Popconfirm>
             )}

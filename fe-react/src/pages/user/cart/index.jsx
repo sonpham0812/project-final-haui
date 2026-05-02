@@ -55,10 +55,11 @@ const CartPage = () => {
   // ----- Clear entire cart -----
   const handleClearCart = () => {
     Modal.confirm({
-      title: "Clear Cart",
-      content: "Are you sure you want to clear your entire cart?",
-      okText: "Yes",
-      cancelText: "No",
+      title: "Xoá giỏ hàng",
+      content:
+        "Bạn có chắc chắn muốn xóa toàn bộ sản phẩm trong giỏ hàng không?",
+      okText: "Có",
+      cancelText: "Không",
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
@@ -75,7 +76,7 @@ const CartPage = () => {
   // ----- Go to checkout -----
   const handleCheckout = () => {
     const selected = cartItems.filter((item) =>
-      selectedItems.includes(item.product_id)
+      selectedItems.includes(item.product_id),
     );
     localStorage.setItem("checkout_items", JSON.stringify(selected));
     navigate("/checkout");
@@ -172,8 +173,6 @@ const CartPage = () => {
 
   return (
     <div className="cart-page">
-      <h2>Shopping Cart</h2>
-
       <div className="cart-box">
         <Table
           rowKey="product_id"

@@ -42,7 +42,9 @@ const AdminOrderDetailPage = () => {
       message.success(successMsg);
       navigate("/admin/orders");
     } catch (err) {
-      message.error(err?.response?.data?.message || err?.message || "Cập nhật thất bại");
+      message.error(
+        err?.response?.data?.message || err?.message || "Cập nhật thất bại",
+      );
       setUpdating(false);
     }
   };
@@ -67,7 +69,9 @@ const AdminOrderDetailPage = () => {
             description="Chuyển sang trạng thái Chờ giao hàng."
             okText="Xác nhận"
             cancelText="Hủy"
-            onConfirm={() => handleStatusChange("CONFIRMED", "Đã xác nhận đơn hàng thành công")}
+            onConfirm={() =>
+              handleStatusChange("CONFIRMED", "Đã xác nhận đơn hàng thành công")
+            }
           >
             <Button
               type="primary"
@@ -105,7 +109,9 @@ const AdminOrderDetailPage = () => {
           description="Xác nhận đã giao hàng thành công."
           okText="Hoàn thành"
           cancelText="Hủy"
-          onConfirm={() => handleStatusChange("COMPLETED", "Đơn hàng đã hoàn thành")}
+          onConfirm={() =>
+            handleStatusChange("COMPLETED", "Đơn hàng đã hoàn thành")
+          }
         >
           <Button
             type="primary"
@@ -114,33 +120,18 @@ const AdminOrderDetailPage = () => {
             size="large"
             style={{ background: "#52c41a", borderColor: "#52c41a" }}
           >
-            Hoàn thành
+            Hoàn thành đơn
           </Button>
         </Popconfirm>
       )}
-
-      <Button size="large" onClick={() => navigate("/admin/orders")}>
-        Đóng
-      </Button>
     </Space>
   );
 
   return (
     <div className="admin-order-detail-page">
-      <div className="admin-order-detail__topbar">
-        <button
-          className="admin-order-detail__back"
-          onClick={() => navigate("/admin/orders")}
-        >
-          <ArrowLeftOutlined /> Danh sách đơn hàng
-        </button>
-        <span className="admin-order-detail__title">Chi tiết đơn hàng</span>
-        <div />
-      </div>
       <OrderDetailContent order={order} actions={actionButtons} />
     </div>
   );
 };
 
 export default AdminOrderDetailPage;
-

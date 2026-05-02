@@ -1,5 +1,6 @@
-import { Divider, Tag } from "antd";
+import { Divider, Tag, Button, Flex } from "antd";
 import {
+  ArrowLeftOutlined,
   CalendarOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -16,6 +17,7 @@ import {
   formatDate,
   formatPrice,
 } from "../constant";
+import { useNavigate } from "react-router-dom";
 
 const getTimeLabel = (status) => {
   switch (status) {
@@ -30,11 +32,10 @@ const getTimeLabel = (status) => {
   }
 };
 
-// ─── Progress steps ───────────────────────────────────────────────
 const OrderProgress = ({ status }) => {
   if (status === "CANCELED") return null;
   const currentIndex = STATUS_STEPS.indexOf(status);
-  const stepLabels = ["Đặt hàng", "Xác nhận", "Giao hàng"];
+  const stepLabels = ["Đặt hàng", "Chờ giao hàng", "Giao hàng"];
 
   return (
     <div className="order-progress">
@@ -58,11 +59,8 @@ const OrderProgress = ({ status }) => {
   );
 };
 
-// ─── Main shared component ────────────────────────────────────────
-// Props:
-//   order   — order object with items[]
-//   actions — optional ReactNode rendered at bottom (e.g. cancel button)
 const OrderDetailContent = ({ order, actions }) => {
+  const navigate = useNavigate();
   const meta = STATUS_META[order.status] || {};
   const extraTime = getTimeLabel(order.status);
   const subtotal = (order.items || []).reduce(
@@ -72,18 +70,27 @@ const OrderDetailContent = ({ order, actions }) => {
 
   return (
     <div className="order-detail__body">
-      {/* ── Status card ── */}
       <div className="order-detail__card order-detail__status-card">
         <div className="order-detail__status-row">
-          <span className="order-detail__code">
-            Mã đơn: <strong>#{order.order_code}</strong>
-          </span>
-          <Tag
-            color={meta.color}
-            style={{ fontSize: 13, padding: "3px 12px", borderRadius: 20 }}
+          <Button
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(-1)}
+            type="text"
           >
-            {meta.icon} {meta.text}
-          </Tag>
+            Trở lại
+          </Button>
+          <Flex gap="middle" align="center">
+            <span className="order-detail__code">
+              Mã đơn: <strong>#{order.order_code}</strong>
+            </span>
+            <Tag
+              color={meta.color}
+              style={{ fontSize: 13, padding: "3px 12px", borderRadius: 20 }}
+            >
+              {meta.icon} {meta.text}
+            </Tag>
+            {actions && <div className="order-detail__actions">{actions}</div>}
+          </Flex>
         </div>
         <OrderProgress status={order.status} />
       </div>
@@ -183,9 +190,6 @@ const OrderDetailContent = ({ order, actions }) => {
           </div>
         </div>
       </div>
-
-      {/* ── Slot for extra actions ── */}
-      {actions && <div className="order-detail__actions">{actions}</div>}
     </div>
   );
 };

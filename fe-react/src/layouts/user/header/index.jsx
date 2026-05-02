@@ -7,11 +7,9 @@ import { useState } from "react";
 import { publicCategoryServices } from "../../../api";
 import CartIcon from "../../../components/user/cart";
 import { useMount } from "../../../utils";
-import useAuth from "../../../hooks/useAuth";
 
 const Header = () => {
   const [categoryItems, setCategoryItems] = useState([]);
-  const { user, isAuthenticated } = useAuth();
 
   const getCategoryItems = async () => {
     const response = await publicCategoryServices.getAll();
@@ -39,21 +37,14 @@ const Header = () => {
     }
   };
 
-  const onClick = (category) => {
-    navigate(`/${category}`);
-  };
-
-  const avatarLetter =
-    user?.name?.charAt(0)?.toUpperCase() ||
-    user?.email?.charAt(0)?.toUpperCase() ||
-    "U";
+  const onClick = (id) => navigate(`/search?category_id=${id}`);
 
   return (
     <div className="header py-m bg-main">
       <HeaderTop />
       <Flex justify="space-between" align="center">
         <Flex gap={2} align="center">
-          <CategoryList categoryItems={categoryItems} />
+          {/* <CategoryList categoryItems={categoryItems} /> */}
 
           {/* ------ LOGO ------ */}
           <img
@@ -88,27 +79,7 @@ const Header = () => {
           </Flex>
         </div>
 
-        <Flex align="center" gap={16}>
-          <CartIcon />
-          {isAuthenticated && (
-            <Tooltip title="Trang cá nhân" placement="bottom">
-              <Avatar
-                className="header-user-avatar"
-                size={42}
-                onClick={() => navigate("/profile")}
-                style={{
-                  backgroundColor: "#f56a00",
-                  cursor: "pointer",
-                  fontSize: 18,
-                  fontWeight: 700,
-                  flexShrink: 0,
-                }}
-              >
-                {avatarLetter}
-              </Avatar>
-            </Tooltip>
-          )}
-        </Flex>
+        <CartIcon />
       </Flex>
     </div>
   );

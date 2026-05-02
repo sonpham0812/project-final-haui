@@ -317,12 +317,12 @@ const ProductList = () => {
             Áp dụng
           </Button>
         </div>
-        <Tooltip title="Làm mới">
+        {/* <Tooltip title="Làm mới">
           <Button
             icon={<ReloadOutlined />}
             onClick={() => fetchData(page, pageSize)}
           />
-        </Tooltip>
+        </Tooltip> */}
       </div>
 
       {/* ── Table ── */}

@@ -13,6 +13,7 @@ $transition-fast: 0.2s ease;
   background-color: $main-color;
   z-index: 50;
   box-shadow: $shadow-sm;
+  padding: 16px 72px;
 
   &-inner {
     display: flex;
@@ -70,7 +71,7 @@ $transition-fast: 0.2s ease;
   height: 100vh;
   position: fixed;
   top: 64px;
-  margin-left: 28px;
+  margin-left: 52px;
 }
 
 .ant-layout-sider {
@@ -109,12 +110,12 @@ $transition-fast: 0.2s ease;
   transition: margin-left $transition-fast;
 }
 .layout-content.collapsed {
-  margin-left: 132px;
-  width: calc(100% - 180px);
+  margin-left: 164px;
+  width: calc(100% - 228px);
 }
 .layout-content.expanded {
-  margin-left: 252px;
-  width: calc(100% - 300px);
+  margin-left: 284px;
+  width: calc(100% - 348px);
 }
 
 /* Responsive */

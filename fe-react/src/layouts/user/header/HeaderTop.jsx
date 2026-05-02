@@ -1,28 +1,50 @@
-import { Flex } from "antd";
-import { Link } from "react-router-dom";
+import { Dropdown, Flex } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FacebookFilled,
   InstagramFilled,
   QuestionCircleFilled,
+  UserOutlined,
+  ShoppingOutlined,
   LogoutOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import useAuth from "../../../hooks/useAuth";
 
 export default function HeaderTop() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user");
-    window.location.href = "/home";
+    logout();
+    navigate("/login");
   };
 
+  const userMenuItems = [
+    {
+      key: "profile",
+      icon: <UserOutlined />,
+      label: "Tài Khoản Của Tôi",
+      onClick: () => navigate("/profile"),
+    },
+    {
+      key: "orders",
+      icon: <ShoppingOutlined />,
+      label: "Đơn Mua",
+      onClick: () => navigate("/profile?tab=PENDING"),
+    },
+    { type: "divider" },
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: "Đăng Xuất",
+      danger: true,
+      onClick: handleLogout,
+    },
+  ];
+
   return (
-    <Flex
-      justify="space-between"
-      align="center"
-      style={{ padding: "10px 20px" }}
-    >
+    <Flex justify="space-between" align="center">
       <Flex gap="middle">
         <Link to="/home">Kênh Người Bán</Link>
         <Link to="/home">Tải Ứng Dụng</Link>
@@ -37,7 +59,7 @@ export default function HeaderTop() {
         </Flex>
       </Flex>
 
-      <Flex gap="middle">
+      <Flex gap="middle" align="center">
         <Flex gap="4px" align="center">
           <a href="/">
             <QuestionCircleFilled />
@@ -46,17 +68,28 @@ export default function HeaderTop() {
         </Flex>
 
         {isAuthenticated ? (
-          <Flex gap="middle" align="center">
-            <span>Xin chào, {user?.name || "Người dùng"}</span>
-            <Link onClick={handleLogout} style={{ cursor: "pointer" }}>
-              <LogoutOutlined /> Đăng Xuất
-            </Link>
-          </Flex>
+          <Dropdown
+            menu={{ items: userMenuItems }}
+            placement="bottomRight"
+            trigger={["hover"]}
+          >
+            <Flex
+              align="center"
+              gap={6}
+              style={{ cursor: "pointer", userSelect: "none" }}
+            >
+              <UserOutlined style={{ color: "#ffffff" }} />
+              <span style={{ color: "#ffffff" }}>
+                {user?.name || user?.email || "Tài khoản"}
+              </span>
+              <DownOutlined style={{ fontSize: 11, color: "#ffffff" }} />
+            </Flex>
+          </Dropdown>
         ) : (
-          <>
+          <Flex gap="middle">
             <Link to="/register">Đăng Ký</Link>
             <Link to="/login">Đăng Nhập</Link>
-          </>
+          </Flex>
         )}
       </Flex>
     </Flex>

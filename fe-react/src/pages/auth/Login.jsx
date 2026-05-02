@@ -76,7 +76,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex align-center justify-center">
-      <Card className="w-full">
+      <Card>
         <Title level={3}>Đăng nhập</Title>
 
         <Form layout="vertical" onFinish={onFinish}>

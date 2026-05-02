@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Col, Row, Spin, Empty } from "antd";
+import { Col, Row, Spin, Empty, Carousel, Button } from "antd";
 import Product from "../../../components/user/productcard";
 import { publicCategoryServices, publicProductServices } from "../../../api";
+import bannerXmas from "../../../assets/banner_xmas.png";
+import bannerValentine from "../../../assets/banner_valentine.png";
+import bannerSummer from "../../../assets/banner_summer.png";
+import bannerNewyear from "../../../assets/banner_newyear.png";
+import bannerEndyear from "../../../assets/banner_endyear.png";
+import bannerTech from "../../../assets/banner_tech.png";
+import bannerFamily from "../../../assets/banner_family.png";
 import "./index.scss";
+
+const BANNERS = [
+  bannerXmas,
+  bannerValentine,
+  bannerSummer,
+  bannerNewyear,
+  bannerEndyear,
+];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -43,7 +58,7 @@ const Home = () => {
         try {
           const response = await publicProductServices.getProducts({
             category_id: cat.id,
-            limit: 5,
+            limit: 6,
           });
 
           setCategoryProducts((prev) => ({
@@ -61,14 +76,27 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      <section className="home-banner">
-        <img
-          src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1600&auto=format&fit=crop"
-          alt="banner"
-        />
-      </section>
+      <div className="home-banner-wrapper">
+        <Row gutter={16}>
+          <Col span={16}>
+            <Carousel autoplay autoplaySpeed={2000} arrows infinite>
+              {BANNERS.map((src, idx) => (
+                <div key={`banner-${idx}`} className="home-banner__slide">
+                  <img src={src} alt={`banner-${idx + 1}`} />
+                </div>
+              ))}
+            </Carousel>
+          </Col>
+          <Col span={8} className="side-banners">
+            <img src={bannerTech} alt="Tech Sale" />
+            <img src={bannerFamily} alt="Family Sale" />
+          </Col>
+        </Row>
+      </div>
       <section className="featured">
-        <h2>Sản phẩm nổi bật</h2>
+        <div className="product-start">
+          <h3>Sản phẩm nổi bật</h3>
+        </div>
 
         {/* Loading categories */}
         {loadingCategories ? (
@@ -84,19 +112,19 @@ const Home = () => {
               <div className="featured-block" key={c.id}>
                 <div className="featured-header">
                   <h3>{name}</h3>
-                  <button onClick={() => onClickViewAll(c.id)}>
+                  <Button onClick={() => onClickViewAll(c.id)}>
                     Xem tất cả
-                  </button>
+                  </Button>
                 </div>
 
-                <Row gutter={24}>
+                <Row gutter={[16, 16]}>
                   {loadingMap[c.id] ? (
                     <Spin tip="Đang tải...">
                       <div style={{ height: 100 }} />
                     </Spin>
                   ) : Array.isArray(products) && products.length > 0 ? (
                     products.map((p) => (
-                      <Col key={p.id} span={6}>
+                      <Col key={p.id} span={4}>
                         <Product
                           id={p.id}
                           name={p.name}
