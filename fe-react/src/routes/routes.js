@@ -21,10 +21,20 @@ const routers = [
   { path: "/login", component: Login, layout: "auth" },
   { path: "/register", component: Register, layout: "auth" },
   { path: "/cart", component: CartPage, private: true, layout: "user" },
-  { path: "/checkout", component: CheckoutPage, private: true },
+  { path: "/checkout", component: CheckoutPage, private: true, layout: "user" },
   { path: "/search", component: SearchPage, layout: "user" },
-  { path: "/profile", component: ProfilePage, private: true },
-  { path: "/order/:id", component: OrderDetailPage, private: true },
+  {
+    path: "/profile",
+    component: ProfilePage,
+    private: true,
+    layout: "userAccount",
+  },
+  {
+    path: "/order/:id",
+    component: OrderDetailPage,
+    private: true,
+    layout: "userAccount",
+  },
   {
     path: "/product-details/:id",
     component: ProductDetailUser,

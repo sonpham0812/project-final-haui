@@ -1,26 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Avatar,
-  Badge,
-  Empty,
-  Pagination,
-  Spin,
-  Tabs,
-  Tag,
-  message,
-} from "antd";
+import { Badge, Empty, Pagination, Spin, Tabs, Tag, message } from "antd";
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
-  LogoutOutlined,
   RightOutlined,
-  ShoppingOutlined,
   TruckOutlined,
 } from "@ant-design/icons";
 import { userOrderServices } from "../../../api";
-import useAuth from "../../../hooks/useAuth";
 import "./index.scss";
 
 const TABS = [
@@ -61,6 +49,7 @@ const formatPrice = (price) =>
   new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
     price,
   );
+
 
 // ─── Single order card ────────────────────────────────────────────
 const OrderCard = ({ order, onNavigate }) => {
@@ -120,7 +109,7 @@ const OrderCard = ({ order, onNavigate }) => {
 const OrderItemRow = ({ item }) => (
   <div className="order-item-row">
     <img
-      src={item.thumbnail_image}
+      src={item.thumbnail_image || "/placeholder.png"}
       alt={item.name}
       className="order-item-row__img"
       onError={(e) => {
@@ -220,9 +209,7 @@ const OrderTabContent = ({ status }) => {
 
 // ─── Main Profile Page ────────────────────────────────────────────
 const ProfilePage = () => {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, logout } = useAuth();
   const [counts, setCounts] = useState({
     PENDING: 0,
     CONFIRMED: 0,
@@ -244,10 +231,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchCounts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync tab from URL
   useEffect(() => {
     const tabFromUrl = searchParams.get("tab");
     if (tabFromUrl && TABS.some((t) => t.key === tabFromUrl)) {
@@ -259,16 +244,6 @@ const ProfilePage = () => {
     setActiveTab(key);
     setSearchParams({ tab: key });
   };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
-  const avatarLetter =
-    user?.name?.charAt(0)?.toUpperCase() ||
-    user?.email?.charAt(0)?.toUpperCase() ||
-    "U";
 
   const tabItems = TABS.map((t) => ({
     key: t.key,
@@ -288,52 +263,9 @@ const ProfilePage = () => {
     children: <OrderTabContent status={t.key} />,
   }));
 
-  console.log(user);
-
   return (
     <div className="profile-page">
-      {/* ── Hero banner ── */}
-      <div className="profile-hero">
-        <div className="profile-hero__inner">
-          {/* Back home */}
-          <button
-            className="profile-hero__back"
-            onClick={() => navigate("/home")}
-          >
-            ← Về trang chủ
-          </button>
-
-          <div className="profile-hero__user">
-            <Avatar
-              size={80}
-              style={{
-                backgroundColor: "#f56a00",
-                fontSize: 32,
-                fontWeight: 700,
-              }}
-            >
-              {avatarLetter}
-            </Avatar>
-            <div className="profile-hero__info">
-              <h2 className="profile-hero__name">
-                {`Xin chào, ${user?.name || "Người dùng"}`}
-              </h2>
-              <p className="profile-hero__email">{user?.email}</p>
-              <span className="profile-hero__badge">
-                <ShoppingOutlined /> Thành viên
-              </span>
-            </div>
-          </div>
-
-          <button className="profile-hero__logout" onClick={handleLogout}>
-            <LogoutOutlined /> Đăng xuất
-          </button>
-        </div>
-      </div>
-
-      {/* ── Order tabs ── */}
       <div className="profile-content">
-        <h3 className="profile-content__title">Đơn hàng của tôi</h3>
         <Tabs
           activeKey={activeTab}
           onChange={handleTabChange}
