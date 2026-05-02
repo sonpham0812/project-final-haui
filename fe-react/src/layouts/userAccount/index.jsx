@@ -14,13 +14,14 @@ const MENU = [
     label: "Tài Khoản Của Tôi",
     icon: <UserOutlined />,
     path: "/profile",
+    matchPath: "/profile",
   },
   {
     key: "orders",
     label: "Đơn Mua",
     icon: <ShoppingOutlined />,
-    path: "/profile?tab=PENDING",
-    matchPath: "/profile",
+    path: "/orders?tab=PENDING",
+    matchPath: "/orders",
   },
 ];
 
