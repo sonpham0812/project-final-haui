@@ -98,7 +98,7 @@ const SearchPage = () => {
       <Row gutter={24}>
         {/* ── Sidebar bộ lọc ── */}
         <Col
-          span={6}
+          span={5}
           style={{ alignSelf: "flex-start", position: "sticky", top: 198 }}
         >
           <div className="search-sidebar">
@@ -175,7 +175,7 @@ const SearchPage = () => {
         </Col>
 
         {/* ── Kết quả tìm kiếm ── */}
-        <Col span={18}>
+        <Col span={19}>
           <div className="search-results">
             <div className="search-results-header">
               {search ? (
@@ -201,7 +201,7 @@ const SearchPage = () => {
               <>
                 <Row gutter={[16, 16]}>
                   {products.map((p) => (
-                    <Col key={p.id} span={24 / 5}>
+                    <Col key={p.id} flex={'20%'}>
                       <Product
                         id={p.id}
                         name={p.name}

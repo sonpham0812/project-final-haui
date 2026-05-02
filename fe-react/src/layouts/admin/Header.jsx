@@ -17,7 +17,7 @@ export default function Header({ toggleSidebar, isCollapsed }) {
   };
 
   return (
-    <div className="admin-header py-m px-xxl">
+    <div className="admin-header">
       <div className="admin-header-inner">
         <div
           className={`admin-header-left ${isCollapsed ? "collapsed" : "expanded"} flex gap-s`}
@@ -39,12 +39,6 @@ export default function Header({ toggleSidebar, isCollapsed }) {
           <div className="logo-wrapper">
             {!isCollapsed && <span className="logo">Falcon</span>}
           </div>
-          <Input.Search
-            placeholder="Search anything..."
-            allowClear
-            enterButton
-            className="search-box"
-          />
         </div>
         <div className="admin-header-right">
           <BellFilled className="bell-icon" />

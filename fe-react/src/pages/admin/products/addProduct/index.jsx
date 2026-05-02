@@ -9,10 +9,21 @@ import {
   Divider,
   message,
   Spin,
+  Row,
+  Col,
+  Flex,
 } from "antd";
-import { ArrowLeftOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import { adminCategoryServices, adminProductServices, adminUploadServices } from "../../../../api";
+import {
+  adminCategoryServices,
+  adminProductServices,
+  adminUploadServices,
+} from "../../../../api";
 import "./index.scss";
 
 const { TextArea } = Input;
@@ -67,9 +78,19 @@ export default function AddProduct() {
           discount: product.discount_percentage,
           description: product.description,
           category: product.category_id,
-          thumbnail: [{ uid: "-1", name: "thumbnail", status: "done", url: product.thumbnail_image }],
+          thumbnail: [
+            {
+              uid: "-1",
+              name: "thumbnail",
+              status: "done",
+              url: product.thumbnail_image,
+            },
+          ],
           images: (product.images ?? []).map((img, index) => ({
-            uid: index, name: `image-${index}`, status: "done", url: img,
+            uid: index,
+            name: `image-${index}`,
+            status: "done",
+            url: img,
           })),
         });
       } catch {
@@ -91,7 +112,9 @@ export default function AddProduct() {
       const thumbnailFile = values.thumbnail[0];
       let thumbnailUrl = thumbnailFile.url;
       if (thumbnailFile.originFileObj) {
-        const res = await adminUploadServices.uploadImage(thumbnailFile.originFileObj);
+        const res = await adminUploadServices.uploadImage(
+          thumbnailFile.originFileObj,
+        );
         thumbnailUrl = res.imageUrl;
       }
 
@@ -136,13 +159,7 @@ export default function AddProduct() {
     <div className="add-product-page">
       {/* ── Topbar ── */}
       <div className="add-product__topbar">
-        <button className="add-product__back" onClick={() => navigate("/admin/product-list")}>
-          <ArrowLeftOutlined /> Danh sách sản phẩm
-        </button>
-        <span className="add-product__topbar-title">
-          {isEdit ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}
-        </span>
-        <div />
+        <h3>{isEdit ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}</h3>
       </div>
 
       <div className="add-product__body">
@@ -153,141 +170,195 @@ export default function AddProduct() {
             onFinish={handleSubmit}
             disabled={loadingProduct}
           >
-            {/* ── Section 1: Thông tin cơ bản ── */}
-            <div className="add-product__card">
-              <Divider orientation="left" orientationMargin={0}>
-                <span className="add-product__section-title">Thông tin cơ bản</span>
-              </Divider>
-              <div className="add-product__grid">
-                <Form.Item
-                  name="title"
-                  label="Tên sản phẩm"
-                  rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm" }]}
-                >
-                  <Input size="large" placeholder="Nhập tên sản phẩm" />
-                </Form.Item>
+            <Row gutter={20}>
+              <Col span={16}>
+                <div className="add-product__card">
+                  <Divider orientation="left" orientationMargin={0}>
+                    <span className="add-product__section-title">
+                      Thông tin cơ bản
+                    </span>
+                  </Divider>
+                  <div className="add-product__grid">
+                    <Form.Item
+                      name="title"
+                      label="Tên sản phẩm"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng nhập tên sản phẩm",
+                        },
+                      ]}
+                    >
+                      <Input size="large" placeholder="Nhập tên sản phẩm" />
+                    </Form.Item>
 
-                <Form.Item name="brand" label="Thương hiệu">
-                  <Input size="large" placeholder="VD: Nike, Samsung..." />
-                </Form.Item>
+                    <Form.Item name="brand" label="Thương hiệu">
+                      <Input size="large" placeholder="VD: Nike, Samsung..." />
+                    </Form.Item>
 
-                <Form.Item
-                  name="category"
-                  label="Danh mục"
-                  rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
-                >
-                  <Select
-                    size="large"
-                    options={categories}
-                    loading={loadingCategory}
-                    placeholder="Chọn danh mục"
-                  />
-                </Form.Item>
+                    <Form.Item
+                      name="category"
+                      label="Danh mục"
+                      rules={[
+                        { required: true, message: "Vui lòng chọn danh mục" },
+                      ]}
+                    >
+                      <Select
+                        size="large"
+                        options={categories}
+                        loading={loadingCategory}
+                        placeholder="Chọn danh mục"
+                      />
+                    </Form.Item>
 
-                <Form.Item
-                  name="stock"
-                  label="Số lượng tồn kho"
-                  rules={[{ required: true, message: "Vui lòng nhập số lượng" }]}
-                >
-                  <InputNumber
-                    size="large"
-                    min={0}
-                    placeholder="0"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
+                    <Form.Item
+                      name="stock"
+                      label="Số lượng tồn kho"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập số lượng" },
+                      ]}
+                    >
+                      <InputNumber
+                        size="large"
+                        min={0}
+                        placeholder="0"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
 
-                <Form.Item
-                  name="price"
-                  label="Giá bán (VNĐ)"
-                  rules={[{ required: true, message: "Vui lòng nhập giá bán" }]}
-                >
-                  <InputNumber
-                    size="large"
-                    min={0}
-                    placeholder="0"
-                    style={{ width: "100%" }}
-                    formatter={(v) => v ? `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
-                  />
-                </Form.Item>
+                    <Form.Item
+                      name="price"
+                      label="Giá bán (VNĐ)"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập giá bán" },
+                      ]}
+                    >
+                      <InputNumber
+                        size="large"
+                        min={0}
+                        placeholder="0"
+                        style={{ width: "100%" }}
+                        formatter={(v) =>
+                          v ? `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""
+                        }
+                      />
+                    </Form.Item>
 
-                <Form.Item name="discount" label="Giảm giá (%)">
-                  <InputNumber
-                    size="large"
-                    min={0}
-                    max={100}
-                    placeholder="0"
-                    style={{ width: "100%" }}
-                    addonAfter="%"
-                  />
-                </Form.Item>
-              </div>
+                    <Form.Item name="discount" label="Giảm giá (%)">
+                      <InputNumber
+                        size="large"
+                        min={0}
+                        max={100}
+                        placeholder="0"
+                        style={{ width: "100%" }}
+                        addonAfter="%"
+                      />
+                    </Form.Item>
+                  </div>
 
-              <Form.Item
-                name="description"
-                label="Mô tả sản phẩm"
-                rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
-              >
-                <TextArea rows={5} placeholder="Nhập mô tả chi tiết sản phẩm..." />
-              </Form.Item>
-            </div>
-
-            {/* ── Section 2: Hình ảnh ── */}
-            <div className="add-product__card">
-              <Divider orientation="left" orientationMargin={0}>
-                <span className="add-product__section-title">Hình ảnh sản phẩm</span>
-              </Divider>
-              <div className="add-product__images-grid">
-                <div>
-                  <p className="add-product__upload-label">Ảnh đại diện <span className="required">*</span></p>
                   <Form.Item
-                    name="thumbnail"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                    rules={[{ required: true, message: "Vui lòng chọn ảnh đại diện" }]}
+                    name="description"
+                    label="Mô tả sản phẩm"
+                    rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
                   >
-                    <Upload listType="picture-card" beforeUpload={() => false} maxCount={1}>
-                      <div>
-                        <PlusOutlined />
-                        <div style={{ marginTop: 8, fontSize: 12 }}>Tải lên</div>
-                      </div>
-                    </Upload>
+                    <TextArea
+                      rows={5}
+                      placeholder="Nhập mô tả chi tiết sản phẩm..."
+                    />
                   </Form.Item>
                 </div>
+              </Col>
+              <Col span={8}>
+                <div className="add-product__card">
+                  <Divider orientation="left" orientationMargin={0}>
+                    <span className="add-product__section-title">
+                      Hình ảnh sản phẩm
+                    </span>
+                  </Divider>
+                  <div className="add-product__images-grid">
+                    <div>
+                      <p className="add-product__upload-label">
+                        Ảnh đại diện <span className="required">*</span>
+                      </p>
+                      <Form.Item
+                        name="thumbnail"
+                        valuePropName="fileList"
+                        getValueFromEvent={normFile}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng chọn ảnh đại diện",
+                          },
+                        ]}
+                      >
+                        <Upload
+                          listType="picture-card"
+                          beforeUpload={() => false}
+                          maxCount={1}
+                        >
+                          <div>
+                            <PlusOutlined />
+                            <div style={{ marginTop: 8, fontSize: 12 }}>
+                              Tải lên
+                            </div>
+                          </div>
+                        </Upload>
+                      </Form.Item>
+                    </div>
 
-                <div>
-                  <p className="add-product__upload-label">Bộ ảnh sản phẩm <span className="required">*</span></p>
-                  <Form.Item
-                    name="images"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                    rules={[{ required: true, message: "Vui lòng chọn ít nhất 1 ảnh" }]}
-                  >
-                    <Upload listType="picture-card" multiple beforeUpload={() => false}>
-                      <div>
-                        <UploadOutlined />
-                        <div style={{ marginTop: 8, fontSize: 12 }}>Tải lên</div>
-                      </div>
-                    </Upload>
-                  </Form.Item>
+                    <div>
+                      <p className="add-product__upload-label">
+                        Bộ ảnh sản phẩm <span className="required">*</span>
+                      </p>
+                      <Form.Item
+                        name="images"
+                        valuePropName="fileList"
+                        getValueFromEvent={normFile}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng chọn ít nhất 1 ảnh",
+                          },
+                        ]}
+                      >
+                        <Upload
+                          listType="picture-card"
+                          multiple
+                          beforeUpload={() => false}
+                        >
+                          <div>
+                            <UploadOutlined />
+                            <div style={{ marginTop: 8, fontSize: 12 }}>
+                              Tải lên
+                            </div>
+                          </div>
+                        </Upload>
+                      </Form.Item>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </Col>
+            </Row>
 
-            {/* ── Actions ── */}
             <div className="add-product__footer">
-              <Button size="large" onClick={() => navigate("/admin/product-list")}>
-                Hủy bỏ
-              </Button>
-              <Button
-                type="primary"
-                size="large"
-                htmlType="submit"
-                loading={submitting}
-                style={{ minWidth: 160 }}
-              >
-                {isEdit ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
-              </Button>
+              <h2>Sẵn sàng thêm mới sản phẩm!</h2>
+              <Flex gap={16}>
+                <Button
+                  size="large"
+                  onClick={() => navigate("/admin/product-list")}
+                >
+                  Hủy bỏ
+                </Button>
+                <Button
+                  type="primary"
+                  size="large"
+                  htmlType="submit"
+                  loading={submitting}
+                  style={{ minWidth: 160 }}
+                >
+                  {isEdit ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+                </Button>
+              </Flex>
             </div>
           </Form>
         </Spin>

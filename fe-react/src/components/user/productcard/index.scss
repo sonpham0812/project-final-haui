@@ -1,5 +1,4 @@
 .product-card {
-  width: 240px;
   border-radius: 10px;
   overflow: hidden;
   position: relative;
@@ -54,8 +53,6 @@
   overflow: hidden;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-
-  height: 42px;
 }
 
 .sold-count {

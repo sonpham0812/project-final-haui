@@ -57,7 +57,7 @@ a {
 
 .min {
   &-w-screen {
-    min-width: 100vw;
+    min-width: 100%;
   }
 
   &-h-screen {
@@ -141,7 +141,7 @@ a {
   }
 }
 
-.mx {
+.my {
   &-xs {
     margin-top: 4px;
     margin-bottom: 4px;
@@ -195,7 +195,7 @@ a {
   }
 }
 
-.my {
+.mx {
   &-xs {
     margin-left: 4px;
     margin-right: 4px;
