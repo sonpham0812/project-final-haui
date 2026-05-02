@@ -6,14 +6,11 @@
 }
 
 .admin-order-detail-page {
-  background: #f5f5f5;
   min-height: 100%;
 
-  // Override actions alignment — admin có nhiều nút, căn giữa đẹp hơn
   .order-detail__actions {
     justify-content: center;
     gap: 12px;
-    padding-bottom: 8px;
   }
 }
 
