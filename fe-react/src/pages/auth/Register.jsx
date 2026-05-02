@@ -41,7 +41,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex align-center justify-center">
-      <Card className="w-full">
+      <Card>
         <Title level={3}>Đăng ký</Title>
 
         <Form layout="vertical" onFinish={onFinish}>
