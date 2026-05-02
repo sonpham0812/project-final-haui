@@ -31,7 +31,7 @@ export default function HeaderTop() {
       key: "orders",
       icon: <ShoppingOutlined />,
       label: "Đơn Mua",
-      onClick: () => navigate("/profile?tab=PENDING"),
+      onClick: () => navigate("/orders?tab=PENDING"),
     },
     { type: "divider" },
     {

@@ -15,6 +15,7 @@ import AdminOrderList from "../pages/admin/orders/orderList";
 import AdminOrderDetail from "../pages/admin/orders/orderDetail";
 import AddProduct from "../pages/admin/products/addProduct";
 import ProductList from "../pages/admin/products/productList";
+import OrderPage from "../pages/user/orderList";
 
 const routers = [
   { path: "/home", component: Home, layout: "user" },
@@ -23,6 +24,12 @@ const routers = [
   { path: "/cart", component: CartPage, private: true, layout: "user" },
   { path: "/checkout", component: CheckoutPage, private: true, layout: "user" },
   { path: "/search", component: SearchPage, layout: "user" },
+  {
+    path: "/orders",
+    component: OrderPage,
+    private: true,
+    layout: "userAccount",
+  },
   {
     path: "/profile",
     component: ProfilePage,
