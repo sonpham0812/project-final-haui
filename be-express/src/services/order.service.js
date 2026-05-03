@@ -25,8 +25,82 @@ const generateOrderCode = async () => {
 // ----------------------------------------------------------------
 const createOrder = async (
   userId,
-  { address, phone, name, selectedItemIds },
+  { address, phone, name, selectedItemIds, buyNowItems },
 ) => {
+  // ── Nhánh Buy Now: không cần cart, lấy giá trực tiếp từ products ──
+  if (buyNowItems && buyNowItems.length > 0) {
+    const placeholders = buyNowItems.map(() => "?").join(", ");
+    const productIds = buyNowItems.map((i) => i.product_id);
+    const [products] = await db.query(
+      `SELECT id AS product_id, price, stock, status, name
+         FROM products
+        WHERE id IN (${placeholders})`,
+      productIds,
+    );
+
+    if (products.length !== buyNowItems.length) {
+      throw new AppError("Một số sản phẩm không tồn tại hoặc đã bị xóa", 400);
+    }
+
+    // Gán quantity từ buyNowItems vào mỗi product
+    const quantityMap = Object.fromEntries(
+      buyNowItems.map((i) => [i.product_id, i.quantity]),
+    );
+    const items = products.map((p) => ({
+      ...p,
+      quantity: quantityMap[p.product_id],
+    }));
+
+    const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const shippingFee = calculateShippingFee(subtotal);
+    const totalAmount = subtotal + shippingFee;
+    const orderCode = await generateOrderCode();
+
+    const conn = await db.getConnection();
+    try {
+      await conn.beginTransaction();
+      for (const item of items) {
+        const [[product]] = await conn.query(
+          "SELECT stock, status FROM products WHERE id = ? FOR UPDATE",
+          [item.product_id],
+        );
+        if (product.status === "INACTIVE") {
+          throw new AppError(`Product "${item.name}" is no longer available`, 400);
+        }
+        if (item.quantity > product.stock) {
+          throw new AppError(`Insufficient stock for "${item.name}"`, 400);
+        }
+      }
+
+      const [orderResult] = await conn.query(
+        `INSERT INTO orders (order_code, user_id, name, total_amount, shipping_fee, address, phone, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
+        [orderCode, userId, name, totalAmount, shippingFee, address, phone],
+      );
+      const orderId = orderResult.insertId;
+
+      for (const item of items) {
+        await conn.query(
+          "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
+          [orderId, item.product_id, item.quantity, item.price],
+        );
+        await conn.query(
+          "UPDATE products SET stock = stock - ?, sold_count = sold_count + ? WHERE id = ?",
+          [item.quantity, item.quantity, item.product_id],
+        );
+      }
+
+      await conn.commit();
+      return getOrderById(orderId, userId);
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    } finally {
+      conn.release();
+    }
+  }
+
+  // ── Nhánh Cart: giữ nguyên logic cũ ─────────────────────────────
   if (!selectedItemIds || selectedItemIds.length === 0) {
     throw new AppError("No items selected", 400);
   }
@@ -199,6 +273,8 @@ const getUserOrders = async (userId, { status, page = 1, limit = 5 } = {}) => {
 // ----------------------------------------------------------------
 // Get single order (with items) — enforces ownership for users
 // ----------------------------------------------------------------
+
+const { hasUserReviewedProduct } = require("./review.service");
 const getOrderById = async (orderId, userId = null) => {
   const params = [orderId];
   let sql = "SELECT * FROM orders WHERE id = ?";
@@ -209,6 +285,7 @@ const getOrderById = async (orderId, userId = null) => {
 
   const [orders] = await db.query(sql, params);
   if (orders.length === 0) throw new AppError("Order not found", 404);
+  const order = orders[0];
 
   const [items] = await db.query(
     `SELECT oi.*, p.name, p.thumbnail_image, p.brand
@@ -218,7 +295,18 @@ const getOrderById = async (orderId, userId = null) => {
     [orderId],
   );
 
-  return { ...orders[0], items };
+  // Thêm can_review cho từng sản phẩm
+  if (userId && order.status === "COMPLETED") {
+    for (const item of items) {
+      item.can_review = !(await hasUserReviewedProduct(userId, item.product_id, orderId));
+    }
+  } else {
+    for (const item of items) {
+      item.can_review = false;
+    }
+  }
+
+  return { ...order, items };
 };
 
 // ----------------------------------------------------------------

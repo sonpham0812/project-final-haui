@@ -1,5 +1,5 @@
-const db       = require('../config/db');
-const AppError = require('../utils/AppError');
+const db = require("../config/db");
+const AppError = require("../utils/AppError");
 
 // ----------------------------------------------------------------
 // Public: list products (paginated + filters)
@@ -12,52 +12,52 @@ const getProducts = async ({
   min_price,
   max_price,
   min_discount,
-  sort_by = 'newest',
+  sort_by = "newest",
 }) => {
   const offset = (page - 1) * limit;
   const params = [];
   let where = "WHERE p.status = 'ACTIVE'";
 
   if (category_id) {
-    where += ' AND p.category_id = ?';
+    where += " AND p.category_id = ?";
     params.push(category_id);
   }
 
   if (search) {
-    where += ' AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)';
+    where += " AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)";
     params.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
 
   if (min_price) {
-    where += ' AND p.price >= ?';
+    where += " AND p.price >= ?";
     params.push(Number(min_price));
   }
 
   if (max_price) {
-    where += ' AND p.price <= ?';
+    where += " AND p.price <= ?";
     params.push(Number(max_price));
   }
 
   if (min_discount) {
-    where += ' AND p.discount_percentage >= ?';
+    where += " AND p.discount_percentage >= ?";
     params.push(Number(min_discount));
   }
 
   // Sort options
-  let orderBy = 'p.created_at DESC';
-  if (sort_by === 'price-asc') {
-    orderBy = 'p.price ASC';
-  } else if (sort_by === 'price-desc') {
-    orderBy = 'p.price DESC';
-  } else if (sort_by === 'discount') {
-    orderBy = 'p.discount_percentage DESC';
-  } else if (sort_by === 'name') {
-    orderBy = 'p.name ASC';
+  let orderBy = "p.created_at DESC";
+  if (sort_by === "price-asc") {
+    orderBy = "p.price ASC";
+  } else if (sort_by === "price-desc") {
+    orderBy = "p.price DESC";
+  } else if (sort_by === "discount") {
+    orderBy = "p.discount_percentage DESC";
+  } else if (sort_by === "name") {
+    orderBy = "p.name ASC";
   }
 
   const [[{ total }]] = await db.query(
     `SELECT COUNT(*) AS total FROM products p ${where}`,
-    params
+    params,
   );
 
   const [rows] = await db.query(
@@ -67,7 +67,7 @@ const getProducts = async ({
      ${where}
      ORDER BY ${orderBy}
      LIMIT ? OFFSET ?`,
-    [...params, Number(limit), offset]
+    [...params, Number(limit), offset],
   );
 
   return { total, page: Number(page), limit: Number(limit), data: rows };
@@ -82,10 +82,14 @@ const getProductById = async (id) => {
        FROM products p
        LEFT JOIN categories c ON c.id = p.category_id
       WHERE p.id = ? AND p.status = 'ACTIVE'`,
-    [id]
+    [id],
   );
-  if (rows.length === 0) throw new AppError('Product not found', 404);
-  return rows[0];
+  if (rows.length === 0) throw new AppError("Product not found", 404);
+  // Đảm bảo trả về average_rating và review_count
+  const prod = rows[0];
+  prod.average_rating = Number(prod.average_rating) || 0;
+  prod.review_count = Number(prod.review_count) || 0;
+  return prod;
 };
 
 // ----------------------------------------------------------------
@@ -100,57 +104,57 @@ const adminGetProducts = async ({
   max_price,
   min_discount,
   status,
-  sort_by = 'newest',
+  sort_by = "newest",
 }) => {
   const offset = (page - 1) * limit;
   const params = [];
-  let where = 'WHERE 1=1';
+  let where = "WHERE 1=1";
 
   if (category_id) {
-    where += ' AND p.category_id = ?';
+    where += " AND p.category_id = ?";
     params.push(category_id);
   }
 
   if (search) {
-    where += ' AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)';
+    where += " AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)";
     params.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
 
   if (min_price) {
-    where += ' AND p.price >= ?';
+    where += " AND p.price >= ?";
     params.push(Number(min_price));
   }
 
   if (max_price) {
-    where += ' AND p.price <= ?';
+    where += " AND p.price <= ?";
     params.push(Number(max_price));
   }
 
   if (min_discount) {
-    where += ' AND p.discount_percentage >= ?';
+    where += " AND p.discount_percentage >= ?";
     params.push(Number(min_discount));
   }
 
   if (status) {
-    where += ' AND p.status = ?';
+    where += " AND p.status = ?";
     params.push(status.toUpperCase());
   }
 
   // Sort options
-  let orderBy = 'p.created_at DESC';
-  if (sort_by === 'price-asc') {
-    orderBy = 'p.price ASC';
-  } else if (sort_by === 'price-desc') {
-    orderBy = 'p.price DESC';
-  } else if (sort_by === 'discount') {
-    orderBy = 'p.discount_percentage DESC';
-  } else if (sort_by === 'name') {
-    orderBy = 'p.name ASC';
+  let orderBy = "p.created_at DESC";
+  if (sort_by === "price-asc") {
+    orderBy = "p.price ASC";
+  } else if (sort_by === "price-desc") {
+    orderBy = "p.price DESC";
+  } else if (sort_by === "discount") {
+    orderBy = "p.discount_percentage DESC";
+  } else if (sort_by === "name") {
+    orderBy = "p.name ASC";
   }
 
   const [[{ total }]] = await db.query(
     `SELECT COUNT(*) AS total FROM products p ${where}`,
-    params
+    params,
   );
 
   const [rows] = await db.query(
@@ -160,7 +164,7 @@ const adminGetProducts = async ({
      ${where}
      ORDER BY ${orderBy}
      LIMIT ? OFFSET ?`,
-    [...params, Number(limit), offset]
+    [...params, Number(limit), offset],
   );
 
   return { total, page: Number(page), limit: Number(limit), data: rows };
@@ -171,8 +175,16 @@ const adminGetProducts = async ({
 // ----------------------------------------------------------------
 const createProduct = async (data) => {
   const {
-    name, brand, price, description, thumbnail_image, images,
-    discount_percentage = 0, category_id, stock = 0, status = 'ACTIVE',
+    name,
+    brand,
+    price,
+    description,
+    thumbnail_image,
+    images,
+    discount_percentage = 0,
+    category_id,
+    stock = 0,
+    status = "ACTIVE",
   } = data;
 
   const imagesJson = Array.isArray(images) ? JSON.stringify(images) : null;
@@ -182,12 +194,22 @@ const createProduct = async (data) => {
        (name, brand, price, description, thumbnail_image, images,
         discount_percentage, category_id, stock, status)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [name, brand, price, description, thumbnail_image, imagesJson,
-     discount_percentage, category_id, stock, status]
+    [
+      name,
+      brand,
+      price,
+      description,
+      thumbnail_image,
+      imagesJson,
+      discount_percentage,
+      category_id,
+      stock,
+      status,
+    ],
   );
 
   return getProductById(result.insertId).catch(() =>
-    adminGetProductById(result.insertId)
+    adminGetProductById(result.insertId),
   );
 };
 
@@ -197,9 +219,9 @@ const adminGetProductById = async (id) => {
        FROM products p
        LEFT JOIN categories c ON c.id = p.category_id
       WHERE p.id = ?`,
-    [id]
+    [id],
   );
-  if (rows.length === 0) throw new AppError('Product not found', 404);
+  if (rows.length === 0) throw new AppError("Product not found", 404);
   return rows[0];
 };
 
@@ -211,15 +233,23 @@ const updateProduct = async (id, data) => {
   const values = [];
 
   const allowed = [
-    'name', 'brand', 'price', 'description', 'thumbnail_image', 'images',
-    'discount_percentage', 'category_id', 'stock', 'status',
+    "name",
+    "brand",
+    "price",
+    "description",
+    "thumbnail_image",
+    "images",
+    "discount_percentage",
+    "category_id",
+    "stock",
+    "status",
   ];
 
   allowed.forEach((key) => {
     if (data[key] !== undefined) {
       let value = data[key];
       // Convert images array to JSON string
-      if (key === 'images' && Array.isArray(value)) {
+      if (key === "images" && Array.isArray(value)) {
         value = JSON.stringify(value);
       }
       fields.push(`${key} = ?`);
@@ -227,10 +257,13 @@ const updateProduct = async (id, data) => {
     }
   });
 
-  if (fields.length === 0) throw new AppError('No fields to update', 400);
+  if (fields.length === 0) throw new AppError("No fields to update", 400);
 
   values.push(id);
-  await db.query(`UPDATE products SET ${fields.join(', ')} WHERE id = ?`, values);
+  await db.query(
+    `UPDATE products SET ${fields.join(", ")} WHERE id = ?`,
+    values,
+  );
   return adminGetProductById(id);
 };
 

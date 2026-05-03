@@ -1,4 +1,4 @@
-import { Divider, Tag, Button, Flex } from "antd";
+import { Divider, Tag, Button, Flex, Modal, Rate, Input, message } from "antd";
 import {
   ArrowLeftOutlined,
   CalendarOutlined,
@@ -59,6 +59,9 @@ const OrderProgress = ({ status }) => {
   );
 };
 
+import { useState } from "react";
+import { userReviewServices } from "../../api";
+
 const OrderDetailContent = ({ order, actions }) => {
   const navigate = useNavigate();
   const meta = STATUS_META[order.status] || {};
@@ -67,6 +70,48 @@ const OrderDetailContent = ({ order, actions }) => {
     (s, i) => s + i.price * i.quantity,
     0,
   );
+
+  const reviewableItems = (order.items || []).filter((i) => i.can_review);
+
+  // State cho review
+  const [reviewModal, setReviewModal] = useState({
+    open: false,
+    product: null,
+  });
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+
+  const openReview = (product) => {
+    setReviewModal({ open: true, product });
+    setReviewRating(5);
+    setReviewComment("");
+  };
+  const closeReview = () => setReviewModal({ open: false, product: null });
+
+  const submitReview = async () => {
+    if (!reviewRating) {
+      message.warning("Vui lòng chọn số sao");
+      return;
+    }
+    setReviewLoading(true);
+    try {
+      await userReviewServices.createReview({
+        product_id: reviewModal.product.product_id,
+        order_id: order.id,
+        rating: reviewRating,
+        comment: reviewComment,
+      });
+      message.success("Đánh giá thành công!");
+      closeReview();
+      // Có thể reload lại order để cập nhật can_review
+      window.location.reload();
+    } catch (e) {
+      message.error(e?.response?.data?.message || "Lỗi khi gửi đánh giá");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
 
   return (
     <div className="order-detail__body">
@@ -89,7 +134,20 @@ const OrderDetailContent = ({ order, actions }) => {
             >
               {meta.icon} {meta.text}
             </Tag>
-            {actions && <div className="order-detail__actions">{actions}</div>}
+            {(actions || reviewableItems.length > 0) && (
+              <Flex gap={8} className="order-detail__actions">
+                {reviewableItems.map((item) => (
+                  <Button
+                    key={item.product_id}
+                    type="primary"
+                    onClick={() => openReview(item)}
+                  >
+                    Đánh giá
+                  </Button>
+                ))}
+                {actions}
+              </Flex>
+            )}
           </Flex>
         </div>
         <OrderProgress status={order.status} />
@@ -136,6 +194,7 @@ const OrderDetailContent = ({ order, actions }) => {
       </div>
 
       {/* ── Products ── */}
+
       <div className="order-detail__card">
         <h4 className="order-detail__card-title">Sản phẩm đã đặt</h4>
         <div className="order-detail__items">
@@ -168,6 +227,26 @@ const OrderDetailContent = ({ order, actions }) => {
           ))}
         </div>
       </div>
+
+      <Modal
+        title={`Đánh giá sản phẩm: ${reviewModal.product?.name || ""}`}
+        open={reviewModal.open}
+        onCancel={closeReview}
+        onOk={submitReview}
+        okText="Gửi đánh giá"
+        cancelText="Hủy"
+        confirmLoading={reviewLoading}
+      >
+        <div style={{ marginBottom: 16 }}>
+          <Rate value={reviewRating} onChange={setReviewRating} />
+        </div>
+        <Input.TextArea
+          rows={4}
+          placeholder="Nhận xét của bạn về sản phẩm..."
+          value={reviewComment}
+          onChange={(e) => setReviewComment(e.target.value)}
+        />
+      </Modal>
 
       {/* ── Summary ── */}
       <div className="order-detail__card order-detail__summary-card">

@@ -14,3 +14,4 @@ export { adminCategoryServices } from "./admin/categories";
 export { adminOrderServices } from "./admin/orders";
 export { adminUserServices } from "./admin/users";
 export { adminUploadServices } from "./admin/upload";
+export { userReviewServices } from "./review";

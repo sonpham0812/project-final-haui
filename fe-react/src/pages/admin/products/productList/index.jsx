@@ -13,9 +13,9 @@ import {
   Tooltip,
 } from "antd";
 import {
-  DeleteOutlined,
   EditOutlined,
   EyeOutlined,
+  EyeInvisibleOutlined,
   PlusOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
@@ -95,13 +95,13 @@ const ProductList = () => {
     statusFilter,
   ]);
 
-  const handleDelete = async (id) => {
+  const handleHide = async (id) => {
     try {
       await adminProductServices.deleteProduct(id);
-      message.success("Xóa sản phẩm thành công");
+      message.success("Đã ẩn sản phẩm");
       fetchData(page, pageSize);
     } catch {
-      message.error("Xóa sản phẩm thất bại");
+      message.error("Ẩn sản phẩm thất bại");
     }
   };
 
@@ -126,7 +126,14 @@ const ProductList = () => {
             fallback="https://via.placeholder.com/56x56?text=No+Image"
           />
           <div className="product-list__name-info">
-            <span className="product-list__name">{name}</span>
+            <a
+              href={`/admin/product-details/${record.id}`}
+              target="_blank"
+              rel="noreferrer"
+              className="product-list__name product-list__name--link"
+            >
+              {name}
+            </a>
             {record.brand && (
               <span className="product-list__brand">{record.brand}</span>
             )}
@@ -201,15 +208,15 @@ const ProductList = () => {
             />
           </Tooltip>
           <Popconfirm
-            title="Xóa sản phẩm?"
-            description="Hành động này không thể hoàn tác."
-            okText="Xóa"
+            title="Ẩn sản phẩm?"
+            description="Sản phẩm sẽ không hiển thị với người dùng."
+            okText="Ẩn"
             okType="danger"
             cancelText="Hủy"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={() => handleHide(record.id)}
           >
-            <Tooltip title="Xóa">
-              <Button size="small" danger icon={<DeleteOutlined />} />
+            <Tooltip title="Ẩn sản phẩm">
+              <Button size="small" danger icon={<EyeInvisibleOutlined />} />
             </Tooltip>
           </Popconfirm>
         </div>

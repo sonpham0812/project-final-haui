@@ -14,6 +14,7 @@ const cartRoutes = require("./routes/cart.routes");
 const orderRoutes = require("./routes/order.routes");
 const adminRoutes = require("./routes/admin.routes");
 const uploadRoutes = require("./routes/upload.routes");
+const reviewRoutes = require("./routes/review.routes");
 
 const app = express();
 
@@ -35,6 +36,9 @@ app.use("/upload", authenticate, uploadRoutes);
 // ── Authenticated USER routes ─────────────────────────────────────
 app.use("/cart", authenticate, cartRoutes);
 app.use("/orders", authenticate, orderRoutes);
+
+// ── Review routes ─────────────────────────────────────────────────
+app.use("/", reviewRoutes);
 
 // ── Authenticated ADMIN routes ────────────────────────────────────
 app.use("/admin", authenticate, authorize("ADMIN"), adminRoutes);

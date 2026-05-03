@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, Select, message, Divider, Tag } from "antd";
 import { userOrderServices } from "../../../api";
+import { useCart } from "../../../context/CartContext";
 import "./index.scss";
 
 const { Option } = Select;
@@ -89,7 +90,9 @@ const fmt = (n) =>
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const { refreshCart } = useCart();
   const [items, setItems] = useState([]);
+  const [isBuyNow, setIsBuyNow] = useState(false);
   const [province, setProvince] = useState(undefined);
   const [submitting, setSubmitting] = useState(false);
 
@@ -107,6 +110,7 @@ const CheckoutPage = () => {
         return;
       }
       setItems(parsed);
+      setIsBuyNow(localStorage.getItem("checkout_source") === "buy_now");
     } catch {
       navigate("/cart");
     }
@@ -124,7 +128,14 @@ const CheckoutPage = () => {
   const handleSubmit = async (values) => {
     const { phone, province: prov, district, addressDetail, fullName } = values;
     const fullAddress = `${addressDetail}, ${district}, ${prov}`;
-    const selectedItemIds = items.map((i) => i.product_id);
+    const payload = isBuyNow
+      ? {
+          buyNowItems: items.map((i) => ({
+            product_id: i.product_id,
+            quantity: i.quantity,
+          })),
+        }
+      : { selectedItemIds: items.map((i) => i.product_id) };
 
     try {
       setSubmitting(true);
@@ -132,11 +143,13 @@ const CheckoutPage = () => {
         address: fullAddress,
         name: fullName,
         phone,
-        selectedItemIds,
+        ...payload,
       });
       message.success("Đặt hàng thành công! 🎉");
       localStorage.removeItem("checkout_items");
-      navigate("/cart");
+      localStorage.removeItem("checkout_source");
+      if (!isBuyNow) await refreshCart();
+      navigate("/orders?tab=PENDING");
     } catch (err) {
       message.error(
         err?.response?.data?.message || "Đặt hàng thất bại, vui lòng thử lại.",
