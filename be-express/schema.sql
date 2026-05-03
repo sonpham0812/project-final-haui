@@ -1,3 +1,20 @@
+-- Bảng lưu đánh giá sản phẩm
+CREATE TABLE IF NOT EXISTS reviews (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  order_id INT NOT NULL,
+  rating TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (product_id) REFERENCES products(id),
+  FOREIGN KEY (order_id) REFERENCES orders(id)
+);
+
+-- Thêm trường tổng hợp vào bảng products
+ALTER TABLE products ADD COLUMN average_rating DECIMAL(3,2) DEFAULT 0;
+ALTER TABLE products ADD COLUMN review_count INT DEFAULT 0;
 -- ============================================================
 -- Ecommerce Database Schema
 -- ============================================================

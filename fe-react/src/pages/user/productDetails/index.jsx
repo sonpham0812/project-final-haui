@@ -53,6 +53,7 @@ const ProductDetailUser = () => {
       quantity,
     };
     localStorage.setItem("checkout_items", JSON.stringify([checkoutItem]));
+    localStorage.setItem("checkout_source", "buy_now");
     navigate("/checkout");
   };
 

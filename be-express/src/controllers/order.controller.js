@@ -3,20 +3,19 @@ const catchAsync = require("../utils/catchAsync");
 
 // ── User controllers ──────────────────────────────────────────────
 const createOrder = catchAsync(async (req, res) => {
-  const { address, phone, name, selectedItemIds } = req.body;
+  const { address, phone, name, selectedItemIds, buyNowItems } = req.body;
   if (!address || !phone || !name) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "address, phone and name are required",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "address, phone and name are required",
+    });
   }
   const order = await orderService.createOrder(req.user.id, {
     address,
     phone,
     name,
     selectedItemIds,
+    buyNowItems,
   });
   res.status(201).json(order);
 });
