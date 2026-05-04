@@ -47,17 +47,21 @@ const UserAccountLayout = ({ children }) => {
         <aside className="user-account-sidebar">
           {/* User info */}
           <div className="user-account-sidebar__user">
-            <Avatar
-              size={48}
-              style={{
-                backgroundColor: "#ee4d2d",
-                fontSize: 20,
-                fontWeight: 700,
-                flexShrink: 0,
-              }}
-            >
-              {avatarLetter}
-            </Avatar>
+            {user?.avatar ? (
+              <Avatar size={48} src={user.avatar} style={{ flexShrink: 0 }} />
+            ) : (
+              <Avatar
+                size={48}
+                style={{
+                  backgroundColor: "#ee4d2d",
+                  fontSize: 20,
+                  fontWeight: 700,
+                  flexShrink: 0,
+                }}
+              >
+                {avatarLetter}
+              </Avatar>
+            )}
             <div className="user-account-sidebar__user-info">
               <p className="user-account-sidebar__username">
                 {user?.name || "Người dùng"}

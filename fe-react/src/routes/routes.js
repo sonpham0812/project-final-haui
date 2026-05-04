@@ -16,6 +16,8 @@ import AdminOrderDetail from "../pages/admin/orders/orderDetail";
 import AddProduct from "../pages/admin/products/addProduct";
 import ProductList from "../pages/admin/products/productList";
 import OrderPage from "../pages/user/orderList";
+import CategoryList from "../pages/admin/categories/categoryList";
+import UserList from "../pages/admin/users/userList";
 
 const routers = [
   { path: "/home", component: Home, layout: "user" },
@@ -92,6 +94,20 @@ const routers = [
   {
     path: "/admin/orders/:id",
     component: AdminOrderDetail,
+    private: true,
+    role: "ADMIN",
+    layout: "admin",
+  },
+  {
+    path: "/admin/categories",
+    component: CategoryList,
+    private: true,
+    role: "ADMIN",
+    layout: "admin",
+  },
+  {
+    path: "/admin/users",
+    component: UserList,
     private: true,
     role: "ADMIN",
     layout: "admin",

@@ -11,10 +11,11 @@ import {
 } from "../utils";
 
 const useAuth = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, login } = useContext(AuthContext);
 
   return {
     user,
+    login,
     logout,
     isAuthenticated: !!user,
     isAdmin: isAdmin(),
