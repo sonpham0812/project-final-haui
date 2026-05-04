@@ -105,6 +105,16 @@ const ProductList = () => {
     }
   };
 
+  const handleRestore = async (id) => {
+    try {
+      await adminProductServices.updateProduct(id, { status: "ACTIVE" });
+      message.success("Đã hiển thị lại sản phẩm");
+      fetchData(page, pageSize);
+    } catch {
+      message.error("Thao tác thất bại");
+    }
+  };
+
   const columns = [
     {
       title: "Sản phẩm",
@@ -118,6 +128,7 @@ const ProductList = () => {
             src={record.thumbnail_image || "/placeholder.png"}
             style={{
               objectFit: "cover",
+
               borderRadius: 8,
               border: "1px solid #f0f0f0",
               flexShrink: 0,
@@ -127,7 +138,7 @@ const ProductList = () => {
           />
           <div className="product-list__name-info">
             <a
-              href={`/admin/product-details/${record.id}`}
+              href={`/product-details/${record.id}`}
               target="_blank"
               rel="noreferrer"
               className="product-list__name product-list__name--link"
@@ -214,9 +225,23 @@ const ProductList = () => {
             okType="danger"
             cancelText="Hủy"
             onConfirm={() => handleHide(record.id)}
+            disabled={record.status !== "ACTIVE"}
           >
-            <Tooltip title="Ẩn sản phẩm">
-              <Button size="small" danger icon={<EyeInvisibleOutlined />} />
+            <Tooltip
+              title={
+                record.status === "ACTIVE" ? "Ẩn sản phẩm" : "Hiển thị lại"
+              }
+            >
+              {record.status === "ACTIVE" ? (
+                <Button size="small" danger icon={<EyeInvisibleOutlined />} />
+              ) : (
+                <Button
+                  size="small"
+                  icon={<EyeOutlined />}
+                  style={{ color: "#52c41a", borderColor: "#52c41a" }}
+                  onClick={() => handleRestore(record.id)}
+                />
+              )}
             </Tooltip>
           </Popconfirm>
         </div>

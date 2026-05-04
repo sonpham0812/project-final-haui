@@ -1,14 +1,10 @@
-import { Layout, Menu, Button } from "antd";
+import { Layout, Menu } from "antd";
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
   DashboardOutlined,
-  ShopOutlined,
   UnorderedListOutlined,
   AppstoreOutlined,
   ProfileOutlined,
   PlusOutlined,
-  EditOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
@@ -25,6 +21,8 @@ export default function Sidebar({ isCollapsed }) {
     if (p.includes("/product-list")) return "/admin/product-list";
     if (p.includes("/add-product")) return "/admin/add-product";
     if (p.includes("/admin/orders")) return "/admin/orders";
+    if (p.includes("/admin/categories")) return "/admin/categories";
+    if (p.includes("/admin/users")) return "/admin/users";
     if (p.includes("/dashboard")) return "/admin/dashboard";
     return "/admin/dashboard";
   })();
@@ -68,6 +66,12 @@ export default function Sidebar({ isCollapsed }) {
                   <Link to="/admin/orders">Danh Sách Đơn Hàng</Link>
                 </Item>
               </SubMenu>
+              <Item key="/admin/categories" icon={<AppstoreOutlined />}>
+                <Link to="/admin/categories">Danh Mục</Link>
+              </Item>
+              <Item key="/admin/users" icon={<ProfileOutlined />}>
+                <Link to="/admin/users">Người Dùng</Link>
+              </Item>
             </Menu>
           </div>
         </div>

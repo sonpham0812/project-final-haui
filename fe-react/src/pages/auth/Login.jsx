@@ -68,7 +68,11 @@ const Login = () => {
       }
     } catch (err) {
       console.error(err);
-      message.error("Email hoặc mật khẩu không đúng");
+      if (err?.message === "Account is blocked") {
+        message.error("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ hỗ trợ.");
+      } else {
+        message.error("Email hoặc mật khẩu không đúng");
+      }
     } finally {
       setLoading(false);
     }
