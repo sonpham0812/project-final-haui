@@ -55,6 +55,9 @@ const Login = () => {
       });
 
       localStorage.setItem("access_token", token);
+      if (response.refresh_token) {
+        localStorage.setItem("refresh_token", response.refresh_token);
+      }
 
       message.success("Đăng nhập thành công");
 
