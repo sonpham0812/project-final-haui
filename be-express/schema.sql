@@ -13,8 +13,14 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- Thêm trường tổng hợp vào bảng products
-ALTER TABLE products ADD COLUMN average_rating DECIMAL(3,2) DEFAULT 0;
-ALTER TABLE products ADD COLUMN review_count INT DEFAULT 0;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS average_rating DECIMAL(3,2) DEFAULT 0;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS review_count INT DEFAULT 0;
+
+-- Thêm ảnh đại diện cho danh mục
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS image VARCHAR(500) DEFAULT NULL;
+
+-- Thêm avatar cho users
+ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar VARCHAR(500) DEFAULT NULL;
 -- ============================================================
 -- Ecommerce Database Schema
 -- ============================================================
