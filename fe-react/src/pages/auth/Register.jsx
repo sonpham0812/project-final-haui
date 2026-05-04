@@ -67,7 +67,10 @@ const Register = () => {
           <Form.Item
             name="password"
             label="Mật khẩu"
-            rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập mật khẩu" },
+              { min: 6, message: "Mật khẩu tối thiểu 6 ký tự" },
+            ]}
           >
             <Input.Password placeholder="Mật khẩu" />
           </Form.Item>
