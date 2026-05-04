@@ -136,3 +136,18 @@ CREATE TABLE IF NOT EXISTS cart_items (
   FOREIGN KEY (cart_id)    REFERENCES cart(id)     ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
+
+-- ------------------------------------------------------------
+-- refresh_tokens
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id         INT PRIMARY KEY AUTO_INCREMENT,
+  user_id    INT NOT NULL UNIQUE,
+  token_hash VARCHAR(64) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Migration: thêm bảng refresh_tokens nếu chưa có (chạy trên DB hiện tại)
+-- CREATE TABLE IF NOT EXISTS refresh_tokens ... (đã ở trên)

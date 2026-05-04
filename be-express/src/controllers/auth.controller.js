@@ -1,11 +1,16 @@
-const authService  = require('../services/auth.service');
-const catchAsync   = require('../utils/catchAsync');
+const authService = require("../services/auth.service");
+const catchAsync = require("../utils/catchAsync");
 
 const register = catchAsync(async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ success: false, message: 'name, email and password are required' });
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "name, email and password are required",
+      });
   }
 
   const user = await authService.register({ name, email, password });
@@ -16,11 +21,25 @@ const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ success: false, message: 'email and password are required' });
+    return res
+      .status(400)
+      .json({ success: false, message: "email and password are required" });
   }
 
   const result = await authService.login({ email, password });
   res.status(200).json(result);
 });
 
-module.exports = { register, login };
+const refresh = catchAsync(async (req, res) => {
+  const { refresh_token } = req.body;
+  const result = await authService.refresh(refresh_token);
+  res.json(result);
+});
+
+const logout = catchAsync(async (req, res) => {
+  const { refresh_token } = req.body;
+  await authService.logout(refresh_token);
+  res.json({ success: true });
+});
+
+module.exports = { register, login, refresh, logout };

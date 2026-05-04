@@ -10,12 +10,18 @@ import {
   DownOutlined,
 } from "@ant-design/icons";
 import useAuth from "../../../hooks/useAuth";
+import { publicAuthServices } from "../../../api";
 
 export default function HeaderTop() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await publicAuthServices.logout();
+    } catch {
+      /* ignore */
+    }
     logout();
     navigate("/login");
   };
