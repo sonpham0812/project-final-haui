@@ -138,7 +138,7 @@ const ProductList = () => {
           />
           <div className="product-list__name-info">
             <a
-              href={`/product-details/${record.id}`}
+              href={`/admin/product-details/${record.id}`}
               target="_blank"
               rel="noreferrer"
               className="product-list__name product-list__name--link"

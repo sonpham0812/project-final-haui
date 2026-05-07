@@ -4,6 +4,21 @@ import { useNavigate } from "react-router-dom";
 import "./index.scss";
 import { userCartServices } from "../../../api";
 
+// Format VNĐ currency
+const formatVND = (value) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    minimumFractionDigits: 0,
+  }).format(value);
+};
+
+// Tính giá sau khi giảm
+const getDiscountedPrice = (price, discountPercentage) => {
+  if (!discountPercentage) return price;
+  return Math.round(price * (1 - discountPercentage / 100));
+};
+
 const CartPage = () => {
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
@@ -99,11 +114,11 @@ const CartPage = () => {
       render: (_, __, index) => index + 1,
     },
     {
-      title: "Product",
+      title: "Tên sản phẩm",
       dataIndex: "name",
     },
     {
-      title: "Image",
+      title: "Ảnh",
       dataIndex: "thumbnail_image",
       render: (thumbnail_image, record) => {
         return (
@@ -116,12 +131,13 @@ const CartPage = () => {
       },
     },
     {
-      title: "Unit Price",
+      title: "Đơn giá",
       dataIndex: "price",
-      render: (price) => `$${price}`,
+      render: (price, record) =>
+        formatVND(getDiscountedPrice(price, record.discount_percentage)),
     },
     {
-      title: "Quantity",
+      title: "Số lượng",
       dataIndex: "quantity",
       render: (quantity, record) => (
         <Flex align="center" gap={10}>
@@ -146,18 +162,22 @@ const CartPage = () => {
       ),
     },
     {
-      title: "Total Price",
-      render: (_, record) => `$${record.price * record.quantity}`,
+      title: "Tổng giá",
+      render: (_, record) =>
+        formatVND(
+          getDiscountedPrice(record.price, record.discount_percentage) *
+            record.quantity,
+        ),
     },
     {
-      title: "Actions",
+      title: "Hành động",
       render: (_, record) => (
         <Button
           type="link"
           danger
           onClick={() => handleRemoveItem(record.product_id)}
         >
-          Delete
+          Xóa
         </Button>
       ),
     },
@@ -166,10 +186,17 @@ const CartPage = () => {
   // ----- Total Amount -----
   const totalAmount = cartItems
     .filter((item) => selectedItems.includes(item.product_id))
-    .reduce((sum, item) => sum + item.price * item.quantity, 0);
+    .reduce(
+      (sum, item) =>
+        sum +
+        getDiscountedPrice(item.price, item.discount_percentage) *
+          item.quantity,
+      0,
+    );
 
   if (loading) return <Spin />;
-  if (cartItems.length === 0) return <Empty description="Cart is empty" />;
+  if (cartItems.length === 0)
+    return <Empty description="Không có sản phẩm nào trong giỏ hàng" />;
 
   return (
     <div className="cart-page">
@@ -184,12 +211,12 @@ const CartPage = () => {
 
         <div className="cart-bottom">
           <Button danger onClick={handleClearCart}>
-            🗑 CLEAR CART
+            🗑 Xóa tất cả sản phẩm
           </Button>
 
           <div className="total-section">
-            Total ({selectedItems.length} selected):{" "}
-            <span className="total-price">${totalAmount}</span>
+            Tổng ({selectedItems.length} đã chọn):{" "}
+            <span className="total-price">{formatVND(totalAmount)}</span>
             <Button
               type="primary"
               size="large"
@@ -197,7 +224,7 @@ const CartPage = () => {
               disabled={selectedItems.length === 0}
               onClick={handleCheckout}
             >
-              Check Out
+              Mua Ngay
             </Button>
           </div>
         </div>
