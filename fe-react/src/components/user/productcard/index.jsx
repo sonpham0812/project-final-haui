@@ -1,6 +1,7 @@
 import { Card } from "antd";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "../../constant";
 
 const Product = (props) => {
   const { category, image, brand, name, price, discount, id, soldCount } =
@@ -29,14 +30,14 @@ const Product = (props) => {
       onClick={onClick}
     >
       <div className="brand">
-        Brand: <span>{brand}</span>
+        Thương hiệu: <span>{brand}</span>
       </div>
 
       <div className="title">{name}</div>
 
       <div className="price">
-        <span className="old-price">{price}</span>
-        <span className="new-price">{realPrice.toFixed(2)}</span>
+        <span className="old-price">{formatPrice(price)}</span>
+        <span className="new-price">{formatPrice(realPrice)}</span>
         <span className="discount">{`(${discount}%)`}</span>
       </div>
 
