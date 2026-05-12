@@ -108,7 +108,7 @@ const CartPage = () => {
   // ----- Table Columns -----
   const columns = [
     {
-      title: "S.N.",
+      title: "STT",
       dataIndex: "sn",
       width: 60,
       render: (_, __, index) => index + 1,

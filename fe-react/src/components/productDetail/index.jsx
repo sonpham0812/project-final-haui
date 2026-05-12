@@ -126,7 +126,7 @@ const ProductDetailContent = ({
                     src={img}
                     className={`pd-thumb${mainImage === img ? " active" : ""}`}
                     onClick={() => setMainImage(img)}
-                    alt="thumb"
+                    alt="ảnh thu nhỏ"
                     draggable={false}
                   />
                 ))}
