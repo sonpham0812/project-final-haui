@@ -88,8 +88,8 @@ const Home = () => {
             </Carousel>
           </Col>
           <Col span={8} className="side-banners">
-            <img src={bannerTech} alt="Tech Sale" />
-            <img src={bannerFamily} alt="Family Sale" />
+            <img src={bannerTech} alt="Khuyến mãi công nghệ" />
+            <img src={bannerFamily} alt="Khuyến mãi gia đình" />
           </Col>
         </Row>
       </div>

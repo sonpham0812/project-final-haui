@@ -7,6 +7,7 @@ import { useState } from "react";
 import { publicCategoryServices } from "../../../api";
 import CartIcon from "../../../components/user/cart";
 import { useMount } from "../../../utils";
+import logo from "../../../assets/LogoMyBrand.png";
 
 const Header = () => {
   const [categoryItems, setCategoryItems] = useState([]);
@@ -48,8 +49,8 @@ const Header = () => {
 
           {/* ------ LOGO ------ */}
           <img
-            src="/LogoMyBrand.png"
-            alt="brand logo"
+            src={logo}
+            alt="logo thương hiệu"
             className="header-logo"
             onClick={() => navigate("/")}
           />

@@ -52,7 +52,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="footer-bottom">© 2025 YourShop. All rights reserved.</div>
+      <div className="footer-bottom">© 2026 YourShop. All rights reserved.</div>
     </div>
   );
 }
