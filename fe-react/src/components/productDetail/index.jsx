@@ -13,6 +13,7 @@ import {
 import { ShoppingCartOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import { userReviewServices } from "../../api";
 import "./index.scss";
+import RichTextDisplay from "../richTextDisplay";
 
 const formatVND = (v) => `${Number(v).toLocaleString("vi-VN")}₫`;
 
@@ -155,7 +156,7 @@ const ProductDetailContent = ({
             </div>
 
             {product.description && (
-              <p className="pd-description">{product.description}</p>
+              <RichTextDisplay html={product.description} />
             )}
 
             <div className="pd-meta">

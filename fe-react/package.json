@@ -14,9 +14,11 @@
     "@ant-design/icons": "^6.1.0",
     "antd": "^6.1.0",
     "axios": "^1.13.2",
+    "dompurify": "^3.4.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-quill": "^2.0.0",
+    "react-quill-new": "^3.8.3",
     "react-router-dom": "^7.10.1"
   },
   "devDependencies": {
