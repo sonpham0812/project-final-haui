@@ -44,10 +44,14 @@ const ProductDetailUser = () => {
       return;
     }
     // Đi thẳng checkout với sản phẩm này, không qua giỏ hàng
+    const finalPrice = Math.round(
+      product.price * (1 - (product.discount_percentage || 0) / 100)
+    );
     const checkoutItem = {
       product_id: product.id,
       name: product.name,
-      price: product.price,
+      price: finalPrice,
+      original_price: product.price,
       discount_percentage: product.discount_percentage,
       thumbnail_image: product.thumbnail_image,
       quantity,

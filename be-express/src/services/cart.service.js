@@ -24,7 +24,10 @@ const getCart = async (userId) => {
 
   const [items] = await db.query(
     `SELECT ci.product_id, ci.quantity,
-            p.name, p.brand, p.price, p.discount_percentage,
+            p.name, p.brand,
+            p.price AS original_price,
+            p.discount_percentage,
+            ROUND(p.price * (1 - p.discount_percentage / 100), 0) AS price,
             p.images, p.thumbnail_image, p.stock, p.status
        FROM cart_items ci
        JOIN products p ON p.id = ci.product_id

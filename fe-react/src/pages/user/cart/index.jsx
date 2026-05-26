@@ -133,8 +133,16 @@ const CartPage = () => {
     {
       title: "Đơn giá",
       dataIndex: "price",
-      render: (price, record) =>
-        formatVND(getDiscountedPrice(price, record.discount_percentage)),
+      render: (price, record) => (
+        <span>
+          {record.discount_percentage > 0 && (
+            <span style={{ textDecoration: "line-through", color: "#999", marginRight: 6, fontSize: 12 }}>
+              ${formatVND(record.original_price)}
+            </span>
+          )}
+          <span style={{ color: "#e53935", fontWeight: 600 }}>${formatVND(price)}</span>
+        </span>
+      ),
     },
     {
       title: "Số lượng",
@@ -163,14 +171,10 @@ const CartPage = () => {
     },
     {
       title: "Tổng giá",
-      render: (_, record) =>
-        formatVND(
-          getDiscountedPrice(record.price, record.discount_percentage) *
-            record.quantity,
-        ),
+      render: (_, record) => formatVND(record.price * record.quantity),
     },
     {
-      title: "Hành động",
+      title: "Thao tác",
       render: (_, record) => (
         <Button
           type="link"
@@ -186,13 +190,7 @@ const CartPage = () => {
   // ----- Total Amount -----
   const totalAmount = cartItems
     .filter((item) => selectedItems.includes(item.product_id))
-    .reduce(
-      (sum, item) =>
-        sum +
-        getDiscountedPrice(item.price, item.discount_percentage) *
-          item.quantity,
-      0,
-    );
+    .reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   if (loading) return <Spin />;
   if (cartItems.length === 0)
