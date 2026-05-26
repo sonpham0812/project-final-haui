@@ -127,3 +127,12 @@ export const checkPermission = (requiredRoles) => {
     message: hasAccess ? "Bạn có quyền truy cập" : "Bạn không có quyền truy cập",
   };
 };
+
+
+export const formatVND = (value) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    minimumFractionDigits: 0,
+  }).format(value);
+};

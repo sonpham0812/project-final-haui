@@ -1,5 +1,5 @@
 import { Button, Flex, Table, Spin, Empty, Modal } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
 import { userCartServices } from "../../../api";
@@ -21,6 +21,7 @@ const getDiscountedPrice = (price, discountPercentage) => {
 
 const CartPage = () => {
   const navigate = useNavigate();
+  const { refreshCart } = useContext(CartContext);
   const [selectedItems, setSelectedItems] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,7 @@ const CartPage = () => {
     getCartItems();
   }, []);
 
-  // ----- Update quantity -----
+  // ----- Update quantity (chỉ reload table, không update badge vì số sp không đổi) -----
   const handleUpdateQuantity = async (productId, newQuantity) => {
     if (newQuantity < 1) return;
     try {
@@ -56,12 +57,13 @@ const CartPage = () => {
     }
   };
 
-  // ----- Remove item from cart -----
+  // ----- Remove item from cart (update badge vì số sp giảm) -----
   const handleRemoveItem = async (productId) => {
     try {
       await userCartServices.removeFromCart(productId);
       setSelectedItems(selectedItems.filter((id) => id !== productId));
       await getCartItems();
+      refreshCart();
     } catch (error) {
       console.error("Error removing item:", error);
     }
@@ -81,6 +83,7 @@ const CartPage = () => {
           await userCartServices.clearCart();
           setSelectedItems([]);
           await getCartItems();
+          refreshCart();
         } catch (error) {
           console.error("Error clearing cart:", error);
         }
@@ -137,10 +140,10 @@ const CartPage = () => {
         <span>
           {record.discount_percentage > 0 && (
             <span style={{ textDecoration: "line-through", color: "#999", marginRight: 6, fontSize: 12 }}>
-              ${formatVND(record.original_price)}
+              {formatVND(record.original_price)}
             </span>
           )}
-          <span style={{ color: "#e53935", fontWeight: 600 }}>${formatVND(price)}</span>
+          <span style={{ color: "#e53935", fontWeight: 600 }}>{formatVND(price)}</span>
         </span>
       ),
     },
