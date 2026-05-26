@@ -1,4 +1,5 @@
 import { Button } from "antd";
+import { formatVND } from "../../../utils";
 import "./index.scss";
 
 const CartPopover = ({ onViewCart, cartItems }) => {
@@ -23,11 +24,7 @@ const CartPopover = ({ onViewCart, cartItems }) => {
                 <div className="info">
                   <p className="name">{item.name}</p>
                   <p className="price">
-                    {item.price.toLocaleString("vi-VN", {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
-                    ₫
+                    {formatVND(item.price)}
                   </p>
                 </div>
               </div>

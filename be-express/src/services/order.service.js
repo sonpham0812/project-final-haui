@@ -32,7 +32,11 @@ const createOrder = async (
     const placeholders = buyNowItems.map(() => "?").join(", ");
     const productIds = buyNowItems.map((i) => i.product_id);
     const [products] = await db.query(
-      `SELECT id AS product_id, price, stock, status, name
+      `SELECT id AS product_id,
+              price AS original_price,
+              discount_percentage,
+              ROUND(price * (1 - discount_percentage / 100), 0) AS price,
+              stock, status, name
          FROM products
         WHERE id IN (${placeholders})`,
       productIds,
@@ -120,7 +124,11 @@ const createOrder = async (
   // 2. Lấy các items được chọn từ cart của user
   const placeholders = selectedItemIds.map(() => "?").join(", ");
   const [items] = await db.query(
-    `SELECT ci.product_id, ci.quantity, p.price, p.stock, p.status, p.name
+    `SELECT ci.product_id, ci.quantity,
+            p.price AS original_price,
+            p.discount_percentage,
+            ROUND(p.price * (1 - p.discount_percentage / 100), 0) AS price,
+            p.stock, p.status, p.name
        FROM cart_items ci
        JOIN products p ON p.id = ci.product_id
       WHERE ci.cart_id = ? AND ci.product_id IN (${placeholders})`,

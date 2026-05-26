@@ -129,12 +129,7 @@ const CheckoutPage = () => {
     const { phone, province: prov, district, addressDetail, fullName } = values;
     const fullAddress = `${addressDetail}, ${district}, ${prov}`;
     const payload = isBuyNow
-      ? {
-          buyNowItems: items.map((i) => ({
-            product_id: i.product_id,
-            quantity: i.quantity,
-          })),
-        }
+      ? { buyNowItems: items.map((i) => ({ product_id: i.product_id, quantity: i.quantity })) }
       : { selectedItemIds: items.map((i) => i.product_id) };
 
     try {
@@ -179,7 +174,13 @@ const CheckoutPage = () => {
             <div className="product-info">
               <p className="product-name">{item.name}</p>
               <p className="product-meta">
-                Đơn giá: <span className="unit-price">{fmt(item.price)}</span>
+                Đơn giá:{" "}
+                {item.discount_percentage > 0 && item.original_price && (
+                  <span style={{ textDecoration: "line-through", color: "#999", marginRight: 6, fontSize: 12 }}>
+                    {fmt(item.original_price)}
+                  </span>
+                )}
+                <span className="unit-price">{fmt(item.price)}</span>
               </p>
               <p className="product-meta">
                 Số lượng: <Tag color="blue">{item.quantity}</Tag>
