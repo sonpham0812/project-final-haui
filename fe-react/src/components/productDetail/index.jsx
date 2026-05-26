@@ -84,7 +84,7 @@ const ProductDetailContent = ({
       setFilterStar(0);
       fetchReviews(product.id, 0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
   if (!product) return null;
@@ -154,10 +154,6 @@ const ProductDetailContent = ({
                 {reviewStats.review_count} Đánh Giá
               </span>
             </div>
-
-            {product.description && (
-              <RichTextDisplay html={product.description} />
-            )}
 
             <div className="pd-meta">
               {product.brand && (
@@ -248,6 +244,16 @@ const ProductDetailContent = ({
           </div>
         </div>
 
+        {/* ── DESCRIPTION SECTION ── */}
+        {product.description && (
+          <div className="pd-description-section">
+            <h3 className="pd-description-section__title">MÔ TẢ SẢN PHẨM</h3>
+            <div className="pd-description-section__content">
+              <RichTextDisplay html={product.description} />
+            </div>
+          </div>
+        )}
+
         {/* ── REVIEW SECTION ── */}
         <div className="pd-review-section">
           <h3 className="pd-review-section__title">ĐÁNH GIÁ SẢN PHẨM</h3>
@@ -335,3 +341,4 @@ const ProductDetailContent = ({
 };
 
 export default ProductDetailContent;
+
