@@ -25,8 +25,7 @@ import {
   adminUploadServices,
 } from "../../../../api";
 import "./index.scss";
-
-const { TextArea } = Input;
+import RichTextEditor from "../../../../components/richTextEditor";
 
 const normFile = (e) => {
   if (Array.isArray(e)) return e;
@@ -261,10 +260,7 @@ export default function AddProduct() {
                     label="Mô tả sản phẩm"
                     rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
                   >
-                    <TextArea
-                      rows={5}
-                      placeholder="Nhập mô tả chi tiết sản phẩm..."
-                    />
+                   <RichTextEditor />
                   </Form.Item>
                 </div>
               </Col>

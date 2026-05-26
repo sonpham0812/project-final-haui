@@ -1,0 +1,9 @@
+/* Đảm bảo editor đủ cao và hiển thị đúng */
+.rich-text-editor .ql-container {
+  min-height: 160px;
+  font-size: 14px;
+}
+
+.rich-text-editor .ql-editor {
+  min-height: 160px;
+}
