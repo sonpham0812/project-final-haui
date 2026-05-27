@@ -1,5 +1,5 @@
 // routes/routes.js
-import Home from "../pages/user/Home";
+import Home from "../pages/user/home";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import AdminDashboard from "../pages/admin/dashboard";
