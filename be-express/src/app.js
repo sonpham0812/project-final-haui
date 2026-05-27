@@ -20,7 +20,20 @@ const userRoutes = require("./routes/user.routes");
 const app = express();
 
 // ── Global middleware ─────────────────────────────────────────────
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:5173"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // ── Static files: serve uploaded images ──────────────────────────
