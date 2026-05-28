@@ -5,10 +5,12 @@ const catchAsync = require("../utils/catchAsync");
 const createOrder = catchAsync(async (req, res) => {
   const { address, phone, name, selectedItemIds, buyNowItems } = req.body;
   if (!address || !phone || !name) {
-    return res.status(400).json({
-      success: false,
-      message: "address, phone and name are required",
-    });
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "address, phone and name are required",
+      });
   }
   const order = await orderService.createOrder(req.user.id, {
     address,
@@ -47,8 +49,8 @@ const cancelOrder = catchAsync(async (req, res) => {
 
 // ── Admin controllers ─────────────────────────────────────────────
 const adminGetOrders = catchAsync(async (req, res) => {
-  const { page, limit, status } = req.query;
-  const result = await orderService.adminGetOrders({ page, limit, status });
+  const { page, limit, status, search } = req.query;
+  const result = await orderService.adminGetOrders({ page, limit, status, search });
   res.json(result);
 });
 

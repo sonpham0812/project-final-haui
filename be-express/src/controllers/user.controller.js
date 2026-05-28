@@ -1,18 +1,15 @@
-const userService = require("../services/user.service");
-const catchAsync = require("../utils/catchAsync");
+const userService = require('../services/user.service');
+const catchAsync  = require('../utils/catchAsync');
 
 const getUsers = catchAsync(async (req, res) => {
-  const { page, limit, status } = req.query;
-  const result = await userService.getUsers({ page, limit, status });
+  const { page, limit, status, search } = req.query;
+  const result = await userService.getUsers({ page, limit, status, search });
   res.json(result);
 });
 
 const updateUserStatus = catchAsync(async (req, res) => {
   const { status } = req.body;
-  if (!status)
-    return res
-      .status(400)
-      .json({ success: false, message: "status is required" });
+  if (!status) return res.status(400).json({ success: false, message: 'status is required' });
   const user = await userService.updateUserStatus(req.params.id, status);
   res.json(user);
 });
@@ -40,10 +37,4 @@ const changePassword = catchAsync(async (req, res) => {
   res.json(result);
 });
 
-module.exports = {
-  getUsers,
-  updateUserStatus,
-  getMe,
-  updateMe,
-  changePassword,
-};
+module.exports = { getUsers, updateUserStatus, getMe, updateMe, changePassword };

@@ -17,6 +17,7 @@ const UserList = () => {
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState(undefined);
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(15);
 
@@ -25,6 +26,7 @@ const UserList = () => {
     try {
       const params = { page: p, limit: pageSize };
       if (statusFilter) params.status = statusFilter;
+      if (search) params.search = search;
       const res = await adminUserServices.getAllUsers(params);
       setData(res.data ?? []);
       setTotal(res.total ?? 0);
@@ -35,7 +37,7 @@ const UserList = () => {
     }
   };
 
-  useEffect(() => { fetchData(page); }, [page, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchData(page); }, [page, statusFilter, search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleStatus = async (record) => {
     const newStatus = record.status === "ACTIVE" ? "BLOCKED" : "ACTIVE";
@@ -135,6 +137,12 @@ const UserList = () => {
       <div className="user-list__toolbar">
         <h2 className="user-list__title">Quản lý người dùng</h2>
         <div className="user-list__toolbar-right">
+          <Search
+            placeholder="Tìm theo tên hoặc email"
+            allowClear
+            style={{ width: 260 }}
+            onSearch={(v) => { setSearch(v.trim()); setPage(1); }}
+          />
           <Select
             placeholder="Lọc trạng thái"
             allowClear
