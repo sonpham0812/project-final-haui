@@ -2,12 +2,8 @@ import { Divider, Tag, Button, Flex, Modal, Rate, Input, message } from "antd";
 import {
   ArrowLeftOutlined,
   CalendarOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
   EnvironmentOutlined,
   PhoneOutlined,
-  TruckOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
@@ -71,13 +67,7 @@ const OrderDetailContent = ({ order, actions }) => {
     0,
   );
 
-  const reviewableItems = (order.items || []).filter((i) => i.can_review);
-
-  // State cho review
-  const [reviewModal, setReviewModal] = useState({
-    open: false,
-    product: null,
-  });
+  const [reviewModal, setReviewModal] = useState({ open: false, product: null });
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
@@ -134,17 +124,8 @@ const OrderDetailContent = ({ order, actions }) => {
             >
               {meta.icon} {meta.text}
             </Tag>
-            {(actions || reviewableItems.length > 0) && (
+            {(actions) && (
               <Flex gap={8} className="order-detail__actions">
-                {reviewableItems.map((item) => (
-                  <Button
-                    key={item.product_id}
-                    type="primary"
-                    onClick={() => openReview(item)}
-                  >
-                    Đánh giá
-                  </Button>
-                ))}
                 {actions}
               </Flex>
             )}
@@ -214,6 +195,16 @@ const OrderDetailContent = ({ order, actions }) => {
                 <p className="order-detail__item-qty">
                   Số lượng: x{item.quantity}
                 </p>
+                {item.can_review && (
+                  <Button
+                    size="small"
+                    type="primary"
+                    style={{ marginTop: 6 }}
+                    onClick={() => openReview(item)}
+                  >
+                    Đánh giá
+                  </Button>
+                )}
               </div>
               <div className="order-detail__item-price">
                 <span className="order-detail__item-unit">
@@ -244,7 +235,7 @@ const OrderDetailContent = ({ order, actions }) => {
           rows={4}
           placeholder="Nhận xét của bạn về sản phẩm..."
           value={reviewComment}
-          onChange={(e) => setReviewComment(e.target.value)}
+          onChange={e => setReviewComment(e.target.value)}
         />
       </Modal>
 
