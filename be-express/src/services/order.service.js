@@ -370,7 +370,7 @@ const cancelOrder = async (orderId, userId) => {
 // ----------------------------------------------------------------
 // Admin: list all orders (with optional status filter)
 // ----------------------------------------------------------------
-const adminGetOrders = async ({ page = 1, limit = 20, status }) => {
+const adminGetOrders = async ({ page = 1, limit = 20, status, search }) => {
   const offset = (page - 1) * limit;
   const params = [];
   let where = "WHERE 1=1";
@@ -378,6 +378,11 @@ const adminGetOrders = async ({ page = 1, limit = 20, status }) => {
   if (status) {
     where += " AND o.status = ?";
     params.push(status);
+  }
+
+  if (search) {
+    where += " AND o.order_code LIKE ?";
+    params.push(`%${search}%`);
   }
 
   const [[{ total }]] = await db.query(

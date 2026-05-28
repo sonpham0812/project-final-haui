@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Button,
+  Input,
   Popconfirm,
   Select,
   Space,
@@ -20,6 +21,7 @@ import { adminOrderServices } from "../../../../api";
 import "./index.scss";
 
 const { Option } = Select;
+const { Search } = Input;
 
 const STATUS_META = {
   PENDING: { color: "warning", text: "Chờ xác nhận" },
@@ -42,12 +44,14 @@ const AdminOrderList = () => {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [statusFilter, setStatusFilter] = useState(undefined);
+  const [search, setSearch] = useState("");
 
-  const fetchOrders = async (p = page, status = statusFilter) => {
+  const fetchOrders = async (p = page, status = statusFilter, kw = search) => {
     setLoading(true);
     try {
       const params = { page: p, limit: pageSize };
       if (status) params.status = status;
+      if (kw) params.search = kw;
       const res = await adminOrderServices.getAllOrders(params);
       setOrders(res.data || []);
       setTotal(res.total || 0);
@@ -59,9 +63,9 @@ const AdminOrderList = () => {
   };
 
   useEffect(() => {
-    fetchOrders(page, statusFilter);
+    fetchOrders(page, statusFilter, search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, statusFilter]);
+  }, [page, statusFilter, search]);
 
   const handleStatusChange = async (orderId, newStatus) => {
     setUpdatingId(orderId);
@@ -230,6 +234,12 @@ const AdminOrderList = () => {
       <div className="admin-order-list__header">
         <h2 className="admin-order-list__title">Danh sách đơn hàng</h2>
         <Space>
+          <Search
+            placeholder="Tìm theo mã vận đơn"
+            allowClear
+            style={{ width: 220 }}
+            onSearch={(v) => { setSearch(v.trim()); setPage(1); }}
+          />
           <Select
             placeholder="Tất cả trạng thái"
             allowClear
