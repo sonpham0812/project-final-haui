@@ -85,8 +85,8 @@ const createOrder = async (
 
       for (const item of items) {
         await conn.query(
-          "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
-          [orderId, item.product_id, item.quantity, item.price],
+          "INSERT INTO order_items (order_id, product_id, quantity, price, product_name, product_thumbnail) VALUES (?, ?, ?, ?, ?, ?)",
+          [orderId, item.product_id, item.quantity, item.price, item.name || '', item.thumbnail_image || null],
         );
         await conn.query(
           "UPDATE products SET stock = stock - ?, sold_count = sold_count + ? WHERE id = ?",
@@ -128,7 +128,7 @@ const createOrder = async (
             p.price AS original_price,
             p.discount_percentage,
             ROUND(p.price * (1 - p.discount_percentage / 100), 0) AS price,
-            p.stock, p.status, p.name
+            p.stock, p.status, p.name, p.thumbnail_image
        FROM cart_items ci
        JOIN products p ON p.id = ci.product_id
       WHERE ci.cart_id = ? AND ci.product_id IN (${placeholders})`,
@@ -181,8 +181,8 @@ const createOrder = async (
 
     for (const item of items) {
       await conn.query(
-        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
-        [orderId, item.product_id, item.quantity, item.price],
+        "INSERT INTO order_items (order_id, product_id, quantity, price, product_name, product_thumbnail) VALUES (?, ?, ?, ?, ?, ?)",
+        [orderId, item.product_id, item.quantity, item.price, item.name || '', item.thumbnail_image || null],
       );
       await conn.query(
         "UPDATE products SET stock = stock - ?, sold_count = sold_count + ? WHERE id = ?",
@@ -253,7 +253,9 @@ const getUserOrders = async (userId, { status, page = 1, limit = 5 } = {}) => {
     const orderIds = rows.map((r) => r.id);
     const itemPlaceholders = orderIds.map(() => "?").join(", ");
     const [items] = await db.query(
-      `SELECT oi.*, p.name, p.thumbnail_image
+      `SELECT oi.*,
+              COALESCE(NULLIF(oi.product_name, ''), p.name)            AS name,
+              COALESCE(oi.product_thumbnail,        p.thumbnail_image) AS thumbnail_image
          FROM order_items oi
          LEFT JOIN products p ON p.id = oi.product_id
         WHERE oi.order_id IN (${itemPlaceholders})`,
@@ -296,7 +298,10 @@ const getOrderById = async (orderId, userId = null) => {
   const order = orders[0];
 
   const [items] = await db.query(
-    `SELECT oi.*, p.name, p.thumbnail_image, p.brand
+    `SELECT oi.*,
+            COALESCE(NULLIF(oi.product_name, ''), p.name)            AS name,
+            COALESCE(oi.product_thumbnail,        p.thumbnail_image) AS thumbnail_image,
+            p.brand
        FROM order_items oi
        LEFT JOIN products p ON p.id = oi.product_id
       WHERE oi.order_id = ?`,

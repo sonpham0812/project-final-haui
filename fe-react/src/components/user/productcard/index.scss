@@ -62,7 +62,8 @@
 }
 
 .price {
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
 
   .old-price {
     text-decoration: line-through;
@@ -70,15 +71,20 @@
     font-size: 12px;
   }
 
-  .new-price {
-    margin-left: 7px;
-    font-size: 14px;
-    font-weight: 700;
+  .final-price {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .new-price {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .discount {
+      color: #f85606;
+      font-size: 12px;
+    }
   }
 
-  .discount {
-    margin-left: 6px;
-    color: #f85606;
-    font-size: 12px;
-  }
 }

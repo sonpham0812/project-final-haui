@@ -67,11 +67,13 @@ CREATE TABLE IF NOT EXISTS orders (
 -- order_items
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS order_items (
-  id          INT AUTO_INCREMENT PRIMARY KEY,
-  order_id    INT            NOT NULL,
-  product_id  INT,
-  quantity    INT            NOT NULL,
-  price       DECIMAL(15, 0) NOT NULL,
+  id                  INT AUTO_INCREMENT PRIMARY KEY,
+  order_id            INT            NOT NULL,
+  product_id          INT,
+  quantity            INT            NOT NULL,
+  price               DECIMAL(15, 0) NOT NULL,
+  product_name        VARCHAR(200)   NOT NULL DEFAULT '',
+  product_thumbnail   VARCHAR(500)   DEFAULT NULL,
   FOREIGN KEY (order_id)   REFERENCES orders(id)   ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 );
