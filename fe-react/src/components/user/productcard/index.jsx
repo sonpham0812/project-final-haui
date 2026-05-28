@@ -37,8 +37,10 @@ const Product = (props) => {
 
       <div className="price">
         <span className="old-price">{formatPrice(price)}</span>
-        <span className="new-price">{formatPrice(realPrice)}</span>
-        <span className="discount">{`(${discount}%)`}</span>
+        <div className="final-price">
+          <span className="new-price">{formatPrice(realPrice)}</span>
+          <span className="discount">{`(${discount}%)`}</span>
+        </div>
       </div>
 
       {soldCount !== undefined && (
