@@ -1,10 +1,9 @@
-const categoryService = require("../services/category.service");
-const catchAsync = require("../utils/catchAsync");
-const path = require("node:path");
+const categoryService = require('../services/category.service');
+const catchAsync      = require('../utils/catchAsync');
 
 // Public: chỉ trả về danh mục ACTIVE
 const getCategories = catchAsync(async (req, res) => {
-  const { page = 1, limit = 10, search = "" } = req.query;
+  const { page = 1, limit = 10, search = '' } = req.query;
   const categories = await categoryService.getCategories({
     page: Number.parseInt(page),
     limit: Number.parseInt(limit),
@@ -16,7 +15,7 @@ const getCategories = catchAsync(async (req, res) => {
 
 // Admin: trả về tất cả bao gồm cả INACTIVE
 const adminGetCategories = catchAsync(async (req, res) => {
-  const { page = 1, limit = 10, search = "" } = req.query;
+  const { page = 1, limit = 10, search = '' } = req.query;
   const categories = await categoryService.getCategories({
     page: Number.parseInt(page),
     limit: Number.parseInt(limit),
@@ -28,21 +27,14 @@ const adminGetCategories = catchAsync(async (req, res) => {
 
 const createCategory = catchAsync(async (req, res) => {
   const { name, status, image: imageBody } = req.body;
-  if (!name)
-    return res
-      .status(400)
-      .json({ success: false, message: "name is required" });
+  if (!name) return res.status(400).json({ success: false, message: 'name is required' });
   let image = null;
   if (req.file) {
-    image = `${req.protocol}://${req.get("host")}/uploads/categories/${req.file.filename}`;
+    image = req.file.path; // URL Cloudinary
   } else if (imageBody) {
     image = imageBody;
   }
-  const category = await categoryService.createCategory({
-    name,
-    image,
-    status,
-  });
+  const category = await categoryService.createCategory({ name, image, status });
   res.status(201).json(category);
 });
 
@@ -54,7 +46,7 @@ const getCategoryById = catchAsync(async (req, res) => {
 const updateCategory = catchAsync(async (req, res) => {
   const updates = { ...req.body };
   if (req.file) {
-    updates.image = `${req.protocol}://${req.get("host")}/uploads/categories/${req.file.filename}`;
+    updates.image = req.file.path; // URL Cloudinary
   }
   // nếu FE gửi image qua body (đã upload riêng), giữ nguyên updates.image
   const category = await categoryService.updateCategory(req.params.id, updates);
@@ -63,14 +55,7 @@ const updateCategory = catchAsync(async (req, res) => {
 
 const deleteCategory = catchAsync(async (req, res) => {
   await categoryService.deleteCategory(req.params.id);
-  res.json({ success: true, message: "Category has been deactivated" });
+  res.json({ success: true, message: 'Category has been deactivated' });
 });
 
-module.exports = {
-  getCategories,
-  adminGetCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  getCategoryById,
-};
+module.exports = { getCategories, adminGetCategories, createCategory, updateCategory, deleteCategory, getCategoryById };

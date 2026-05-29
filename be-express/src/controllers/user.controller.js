@@ -24,7 +24,7 @@ const updateMe = catchAsync(async (req, res) => {
   // req.file có khi gửi multipart trực tiếp; avatarBody có khi FE đã upload riêng rồi truyền url
   let avatar;
   if (req.file) {
-    avatar = `avatars/${req.file.filename}`;
+    avatar = req.file.path; // URL Cloudinary
   } else if (avatarBody !== undefined) {
     avatar = avatarBody;
   }
