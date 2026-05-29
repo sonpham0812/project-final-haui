@@ -58,7 +58,7 @@ const UserOrderDetailPage = () => {
         try {
           await userOrderServices.cancelOrder(id);
           message.success("Đã hủy đơn hàng thành công");
-          navigate("/profile?tab=CANCELED");
+          navigate("/orders?tab=CANCELED");
         } catch (err) {
           message.error(
             err?.response?.data?.message || "Hủy đơn hàng thất bại",
