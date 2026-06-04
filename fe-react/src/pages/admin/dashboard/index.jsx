@@ -10,7 +10,7 @@ import TopProductsTable from "./topProduct";
 import SummaryCards from "./summaryCard";
 
 // ── Đặt USE_FAKE = false khi BE sẵn sàng ──────────────────────
-const USE_FAKE = true;
+const USE_FAKE = false;
 
 const AdminDashboard = () => {
   const [data, setData] = useState(null);
