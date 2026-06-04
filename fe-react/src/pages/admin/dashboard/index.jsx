@@ -28,7 +28,7 @@ const AdminDashboard = () => {
         setData(FAKE_DATA);
       } else {
         const res = await adminDashboardServices.getDashboard();
-        setData(res);
+        setData(res.data);
       }
     } catch (err) {
       setError(

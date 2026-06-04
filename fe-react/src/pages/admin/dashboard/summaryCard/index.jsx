@@ -9,8 +9,8 @@ import {
 import "./index.scss";
 
 const formatRevenue = (value) => {
-  if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)}M ₫`;
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(1)}M ₫`;
   }
   return `${value.toLocaleString("vi-VN")} ₫`;
 };
@@ -73,7 +73,6 @@ const SummaryCards = ({ data }) => {
                 <p className="summary-card__label">{card.label}</p>
                 <p className="summary-card__value">{card.formatter(value)}</p>
                 <p className="summary-card__trend">
-                  <ArrowUpOutlined /> <span>+12% so với tháng trước</span>
                 </p>
               </div>
             </div>
