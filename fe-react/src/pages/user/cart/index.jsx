@@ -14,12 +14,6 @@ const formatVND = (value) => {
   }).format(value);
 };
 
-// Tính giá sau khi giảm
-const getDiscountedPrice = (price, discountPercentage) => {
-  if (!discountPercentage) return price;
-  return Math.round(price * (1 - discountPercentage / 100));
-};
-
 const CartPage = () => {
   const navigate = useNavigate();
   const { refreshCart } = useContext(CartContext);
@@ -44,17 +38,36 @@ const CartPage = () => {
     getCartItems();
   }, []);
 
-  // ----- Update quantity (chỉ reload table, không update badge vì số sp không đổi) -----
+  // ----- Update quantity (optimistic update: cập nhật UI ngay, rollback nếu API lỗi) -----
   const handleUpdateQuantity = async (productId, newQuantity) => {
-    if (newQuantity < 1) return;
+    if (newQuantity < 1) {
+      Modal.confirm({
+        title: "Xóa sản phẩm",
+        content: "Bạn muốn xóa sản phẩm này khỏi giỏ hàng không?",
+        okText: "Xác nhận",
+        cancelText: "Hủy",
+        okButtonProps: { danger: true },
+        onOk: () => handleRemoveItem(productId),
+      });
+      return;
+    }
+
+    // Lưu snapshot để rollback nếu API lỗi
+    const prevItems = cartItems;
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.product_id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+
     try {
       await userCartServices.updateCartItem({
         product_id: productId,
         quantity: newQuantity,
       });
-      await getCartItems();
     } catch (error) {
       console.error("Error updating quantity:", error);
+      setCartItems(prevItems); // Rollback về state cũ nếu API lỗi
     }
   };
 
